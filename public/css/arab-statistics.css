@@ -1,0 +1,36 @@
+.arab-statistics-page{max-width:1600px}
+.stats-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:24px}
+.stats-summary-card{padding:22px 24px;min-height:112px;display:flex;flex-direction:column;justify-content:center}
+.stats-summary-card .stats-label{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#667085;margin-bottom:8px}
+.stats-summary-card strong{font-size:32px;line-height:1;color:#123866}
+.stats-section,.competition-games-panel{padding:28px;margin-bottom:24px}
+.stats-section-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}
+.stats-section-header h2{margin:0;color:#123866;font-size:24px}
+.stats-section-header p{margin:6px 0 0;color:#667085;font-size:14px}
+.stats-table-wrap{width:100%;overflow-x:auto}
+.stats-table{width:100%;border-collapse:collapse;min-width:760px}
+.stats-table th{text-align:left;background:#f1f4f8;color:#344054;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:15px 18px;border-bottom:1px solid #d9e0e8}
+.stats-table td{padding:16px 18px;border-bottom:1px solid #e5e9ef;color:#182230;font-size:15px}
+.stats-table tbody tr:last-child td{border-bottom:0}
+.competition-row{cursor:pointer;transition:background .16s ease,box-shadow .16s ease}
+.competition-row:hover,.competition-row:focus{background:#f8fbff;outline:none}
+.competition-row.is-active{background:#fff9df;box-shadow:inset 4px 0 0 #f4c400}
+.competition-link{font-weight:700;color:#123866;text-decoration:underline;text-decoration-color:#cbd5e1;text-underline-offset:4px}
+.competition-row:hover .competition-link,.competition-row.is-active .competition-link{color:#0b4f9c;text-decoration-color:#0b4f9c}
+.competition-games-panel[hidden]{display:none}
+.competition-games-header{margin-bottom:22px}
+.payment-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800;letter-spacing:.02em;white-space:nowrap}
+.payment-badge.is-paid{background:#e8f7ee;color:#18794e}
+.payment-badge.is-unpaid{background:#fff0ef;color:#b42318}
+.role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.role-card{border:1px solid #e0e6ee;border-radius:14px;padding:22px;text-align:center;background:#fbfcfe}
+.role-card span{display:block;color:#344054;font-size:15px;font-weight:700}
+.role-card strong{display:block;color:#123866;font-size:32px;margin:9px 0 5px}
+.role-card small{color:#667085;line-height:1.45}
+.stats-empty{text-align:center!important;color:#667085!important;padding:30px!important}
+.stats-mobile-games{display:none}
+.mobile-game-card{border:1px solid #e0e6ee;border-radius:14px;padding:15px;background:#fff;margin-bottom:12px}
+.mobile-game-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.mobile-game-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;color:#667085;font-size:13px}
+@media(max-width:1050px){.stats-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.role-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.stats-summary-grid{grid-template-columns:1fr}.stats-section,.competition-games-panel{padding:18px}.stats-section-header{align-items:flex-start}.stats-section-header h2{font-size:20px}.stats-table-wrap{display:none}.stats-mobile-games{display:block}.competition-games-table{display:none}.competition-games-header{flex-direction:column}.competition-games-header .arab-btn{width:100%}}

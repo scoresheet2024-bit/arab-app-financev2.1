@@ -1,0 +1,46 @@
+<%- include('../partials/header', { title: 'Edit User' }) %>
+<%- include('../partials/navigation') %>
+
+<div class="page">
+    <h1>Edit User</h1>
+    <p class="subtitle">Update account details. Password changes are handled separately.</p>
+
+    <div class="section" style="max-width:700px;">
+        <form action="/users/edit/<%= user.userid %>" method="POST">
+            <label>Username</label>
+            <input type="text" name="username" value="<%= user.username %>" required style="width:100%;padding:12px;margin-top:6px;">
+
+            <label>Full Name</label>
+            <input type="text" name="fullname" value="<%= user.fullname %>" required style="width:100%;padding:12px;margin-top:6px;">
+
+            <label>Role</label>
+            <select name="role" required style="width:100%;padding:12px;margin-top:6px;">
+                <% ['admin','to','official','finance'].forEach(role => { %>
+                    <option value="<%= role %>" <%= user.role === role ? 'selected' : '' %>><%= role %></option>
+                <% }) %>
+            </select>
+
+            <label>Link to Official (optional)</label>
+            <select name="officialid" style="width:100%;padding:12px;margin-top:6px;">
+                <option value="">-- Not linked --</option>
+                <% officials.forEach(official => { %>
+                    <option value="<%= official.officialid %>" <%= String(user.officialid || '') === String(official.officialid) ? 'selected' : '' %>><%= official.fullname %></option>
+                <% }) %>
+            </select>
+
+            <button type="submit" class="button button-primary">Save Changes</button>
+            <a href="/users" class="button button-secondary">Cancel</a>
+        </form>
+
+        <hr style="margin:30px 0;">
+
+        <h2>Reset Password</h2>
+        <form action="/users/<%= user.userid %>/reset-password" method="POST" onsubmit="return confirm('Reset this user password? All current sessions for this user will be logged out.');">
+            <label>New Password</label>
+            <input type="password" name="password" minlength="8" required autocomplete="new-password" style="width:100%;padding:12px;margin-top:6px;">
+            <button type="submit" class="button button-danger">Reset Password</button>
+        </form>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

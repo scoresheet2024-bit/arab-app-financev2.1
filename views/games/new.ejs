@@ -1,0 +1,145 @@
+<%- include('../partials/navigation') %>
+
+<div class="container" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+
+    <div style="margin-bottom: 30px;">
+        <h1 style="margin-bottom: 8px;">Create Game</h1>
+        <p style="color: #666; margin: 0;">
+            Enter the details of the game
+        </p>
+    </div>
+
+    <form action="/games" method="POST">
+
+        <!-- Competition -->
+        <div style="margin-bottom: 20px;">
+            <label for="competition_id" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                Competition *
+            </label>
+
+            <select
+                id="competitionid"
+                name="competitionid"
+                required
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;"
+            >
+                <option value="">-- Select Competition --</option>
+
+                <% competitions.forEach(competition => { %>
+                    <option value="<%= competition.competitionid %>">
+                        <%= competition.competitionname %>
+                        <% if (competition.season) { %>
+                            - <%= competition.season %>
+                        <% } %>
+                    </option>
+                <% }); %>
+            </select>
+       <label>
+
+
+        <!-- Team A -->
+	<label>
+        <div style="margin-bottom: 20px;">
+            <label for="teama" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                
+		Team A *
+            </label>
+
+            <input
+                type="text"
+                id="teama"
+                name="teama"
+                required
+                placeholder="Enter Team A"
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            >
+       <label>
+
+
+        <!-- Team B -->
+        <div style="margin-bottom: 20px;">
+            <label for="teamb" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                Team B *
+            </label>
+
+            <input
+                type="text"
+                id="teamb"
+                name="teamb"
+                required
+                placeholder="Enter Team B"
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            >
+        </div>
+
+
+        <!-- Game Date -->
+        <div style="margin-bottom: 20px;">
+            <label for="gamedate" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                Game Date *
+            </label>
+
+            <input
+                type="date"
+                id="gamedate"
+                name="gamedate"
+                required
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            >
+        </div>
+
+
+        <!-- Game Time -->
+        <div style="margin-bottom: 20px;">
+            <label for="game_time" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                Game Time *
+            </label>
+
+            <input
+                type="time"
+                id="gametime"
+                name="gametime"
+                required
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            >
+        </div>
+
+
+        <!-- Court / Venue -->
+        <div style="margin-bottom: 30px;">
+            <label for="court" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                Court / Venue
+            </label>
+
+            <input
+                type="text"
+                id="court"
+                name="court"
+                placeholder="Enter court or venue"
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box;"
+            >
+        </div>
+
+
+        <!-- Buttons -->
+        <div style="display: flex; gap: 12px;">
+
+            <button
+                type="submit"
+                style="background: #1f6feb; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer;"
+            >
+                Save Game
+            </button>
+
+            <a
+                href="/games"
+                style="background: #eee; color: #333; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; font-weight: 600;"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>

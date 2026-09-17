@@ -1,0 +1,247 @@
+<%- include('partials/navigation') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Report | ARAB Reporting System</title>
+    <link rel="stylesheet" href="/css/arab-game-report.css">
+</head>
+<body class="arab-app-shell arab-game-report-page">
+
+<main class="arab-page-shell">
+    <div class="arab-page-container">
+
+        <div class="page-heading-row">
+            <div>
+                <div class="breadcrumb">
+                    <a href="/">Home</a><span>/</span>
+                    <a href="/assigned-games">Game Reports</a><span>/</span>
+                    <span>New Report</span>
+                </div>
+                <h1>Game Report</h1>
+            </div>
+            <a href="/assigned-games" class="btn btn-light">← Back to Assigned Games</a>
+        </div>
+
+        <% if (readOnly) { %>
+            <div class="alert alert-success">
+                <span class="alert-icon">✓</span>
+                <div><strong>Report submitted.</strong> This game report is now read-only.</div>
+                <% if (game.report_submitted_by) { %>
+                    <div class="submitted-by-line"><strong>Submitted by:</strong> <%= game.report_submitted_by %></div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                <span class="alert-icon">i</span>
+                <div>Please complete the report for this game. You can edit the list of assigned officials if needed.</div>
+            </div>
+        <% } %>
+
+        <!-- GAME INFORMATION -->
+        <section class="report-card game-information-card">
+            <div class="section-title">
+                <span class="section-icon">▣</span>
+                <h2>Game Information</h2>
+            </div>
+
+            <div class="game-meta-grid">
+                <div class="meta-item"><span>Competition</span><strong><%= game.competition || '-' %></strong></div>
+                <div class="meta-item"><span>Season</span><strong><%= game.season || '-' %></strong></div>
+                <div class="meta-item"><span>Game ID</span><strong>#<%= game.gameid %></strong></div>
+                <div class="meta-item"><span>Date</span><strong><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></strong></div>
+                <div class="meta-item"><span>Time</span><strong><%= game.gametime || '-' %></strong></div>
+                <div class="meta-item"><span>Court</span><strong><%= game.court || '-' %></strong></div>
+            </div>
+
+            <div class="matchup">
+                <div class="team-block">
+                    <div class="team-mark"><span><%= String(game.teama || 'A').trim().charAt(0).toUpperCase() %></span></div>
+                    <div class="team-name"><%= game.teama || '-' %></div>
+                </div>
+                <div class="matchup-vs"><span>VS</span></div>
+                <div class="team-block">
+                    <div class="team-mark"><span><%= String(game.teamb || 'B').trim().charAt(0).toUpperCase() %></span></div>
+                    <div class="team-name"><%= game.teamb || '-' %></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ASSIGNED OFFICIALS -->
+        <section class="report-card">
+            <div class="section-header-row">
+                <div class="section-title">
+                    <span class="section-icon">♟</span>
+                    <h2>Assigned Officials</h2>
+                </div>
+
+                <% 
+                    const reportRole = String(
+                        (typeof currentUser !== 'undefined' && currentUser)
+                            ? (currentUser.actualRole || currentUser.role || '')
+                            : ((typeof user !== 'undefined' && user) ? (user.actualRole || user.role || '') : '')
+                    ).trim().toLowerCase();
+                    const canEditOfficials = true;
+                %>
+
+                <% if (!readOnly && canEditOfficials) { %>
+                    <button type="button" class="btn btn-primary" onclick="openOfficialsEditor()">✎ Edit Officials</button>
+                <% } %>
+            </div>
+
+            <div class="official-table-wrap">
+                <table class="official-table">
+                    <thead>
+                        <tr><th>#</th><th>Name</th><th>Role</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                    <% 
+                        const assignedOfficials = [
+                            [game.referee1, 'Referee'],
+                            [game.umpire1, 'Umpire 1'],
+                            [game.umpire2, 'Umpire 2'],
+                            [game.scorer, 'Scorer'],
+                            [game.timer, 'Timer'],
+                            [game.shot_clock_operator, 'Shot Clock Operator'],
+                            [game.assistant_scorer, 'Assistant Scorer'],
+                            [game.commissioner, 'Commissioner']
+                        ].filter(item => item[0]);
+                    %>
+                    <% if (assignedOfficials.length) { %>
+                        <% assignedOfficials.forEach((item, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><strong><%= item[0] %></strong></td>
+                                <td><%= item[1] %></td>
+                                <td><span class="status-badge">✓ Assigned</span></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr><td colspan="4" class="empty-row">No officials are currently assigned.</td></tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- REPORT DETAILS -->
+        <form id="gameReportForm" action="/games/report/<%= game.gameid %>/submit" method="POST" enctype="multipart/form-data">
+            <section class="report-card">
+                <div class="section-title">
+                    <span class="section-icon">▤</span>
+                    <h2>Report Details</h2>
+                </div>
+
+                <label class="field-label" for="comments">Incidents / Comments</label>
+                <textarea id="comments" name="comments" class="report-textarea" placeholder="Enter any incidents, technical fouls, warnings or other remarks about the game..." <%= readOnly ? 'disabled' : '' %>></textarea>
+
+                <% if (!readOnly) { %>
+                    <div class="attachment-heading">⌕ <span>Attachments</span></div>
+                    <label class="upload-box" for="document">
+                        <span class="upload-icon">⇧</span>
+                        <strong>Click to upload or drag and drop</strong>
+                        <small>PDF, JPG or PNG (Max 10MB)</small>
+                        <input id="document" type="file" name="document" accept=".pdf,.jpg,.jpeg,.png">
+                    </label>
+                    <div id="selectedFile" class="selected-file"></div>
+                    <input type="hidden" name="documenttype" value="Scoresheet">
+                <% } else if (documents && documents.length) { %>
+                    <div class="existing-document">
+                        <span>📎</span>
+                        <div>
+                            <strong><%= documents[0].filename %></strong>
+                            <small><%= documents[0].documenttype || 'Game Document' %></small>
+                        </div>
+                        <a href="/uploads/<%= encodeURIComponent(documents[0].filepath) %>" target="_blank" rel="noopener">Open</a>
+                    </div>
+                <% } %>
+            </section>
+
+            <div class="report-actions">
+                <% if (!readOnly) { %>
+                    <button type="submit" class="btn btn-primary btn-submit">➤ Submit Report</button>
+                <% } else { %>
+                    <a href="/statistics" class="btn btn-light">Back to Statistics</a>
+                <% } %>
+            </div>
+        </form>
+
+    </div>
+</main>
+
+<% if (!readOnly && canEditOfficials) { %>
+<!-- EDIT OFFICIALS MODAL -->
+<div id="officialsModal" class="modal-backdrop" hidden>
+    <div class="officials-modal" role="dialog" aria-modal="true" aria-labelledby="officialsModalTitle">
+        <div class="modal-header">
+            <div>
+                <h2 id="officialsModalTitle">Edit Assigned Officials</h2>
+                <p>Add, modify or remove an official from this game.</p>
+            </div>
+            <button type="button" class="modal-close" onclick="closeOfficialsEditor()">×</button>
+        </div>
+
+        <form action="/games/report/<%= game.gameid %>/officials" method="POST" id="officialsEditForm">
+            <% 
+                const editorFields = [
+                    ['referee_id', 'Referee', game.referee1_id],
+                    ['umpire1_id', 'Umpire 1', game.umpire1_id],
+                    ['umpire2_id', 'Umpire 2', game.umpire2_id],
+                    ['scorer_id', 'Scorer', game.scorer_id],
+                    ['timer_id', 'Timer', game.timer_id],
+                    ['shot_clock_operator_id', 'Shot Clock Operator', game.shot_clock_operator_id],
+                    ['assistant_scorer_id', 'Assistant Scorer', game.assistant_scorer_id],
+                    ['commissioner_id', 'Commissioner', game.commissioner_id]
+                ];
+            %>
+            <div class="editor-grid">
+                <% editorFields.forEach(field => { %>
+                    <div class="editor-field">
+                        <label for="edit_<%= field[0] %>"><%= field[1] %></label>
+                        <select id="edit_<%= field[0] %>" name="<%= field[0] %>">
+                            <option value="">— Remove / Not assigned —</option>
+                            <% officials.forEach(official => { %>
+                                <option value="<%= official.officialid %>" <%= String(field[2] || '') === String(official.officialid) ? 'selected' : '' %>>
+                                    <%= official.fullname %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                <% }); %>
+            </div>
+            <input type="hidden" name="documenttype" value="Scoresheet">
+            <div class="modal-actions">
+                <button type="button" class="btn btn-light" onclick="closeOfficialsEditor()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Officials</button>
+            </div>
+        </form>
+    </div>
+</div>
+<% } %>
+
+<script>
+function openOfficialsEditor() {
+    const modal = document.getElementById('officialsModal');
+    if (modal) { modal.hidden = false; document.body.classList.add('modal-open'); }
+}
+function closeOfficialsEditor() {
+    const modal = document.getElementById('officialsModal');
+    if (modal) { modal.hidden = true; document.body.classList.remove('modal-open'); }
+}
+
+const fileInput = document.getElementById('document');
+if (fileInput) {
+    fileInput.addEventListener('change', function () {
+        const box = document.getElementById('selectedFile');
+        box.textContent = this.files.length ? 'Selected: ' + this.files[0].name : '';
+    });
+}
+window.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeOfficialsEditor();
+});
+</script>
+
+</body>
+</html>

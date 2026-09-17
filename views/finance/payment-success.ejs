@@ -1,0 +1,446 @@
+<%- include('../partials/header', { title: 'Finance - Payment Successful' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+    .success-page {
+        padding: 30px;
+        background: #f7f9fc;
+        min-height: calc(100vh - 68px);
+        color: #172033;
+    }
+
+    .success-card {
+        max-width: 1150px;
+        margin: 0 auto;
+        background: white;
+        border: 1px solid #e1e5ec;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .success-header {
+        text-align: center;
+        padding: 10px 0 25px;
+    }
+
+    .success-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 34px;
+        font-weight: 800;
+    }
+
+    .success-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+    }
+
+    .success-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 17px;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin: 20px 0 30px;
+    }
+
+    .summary-box {
+        border: 1px solid #e1e5ec;
+        border-radius: 10px;
+        padding: 16px;
+        background: #fafbfc;
+    }
+
+    .summary-label {
+        display: block;
+        color: #667085;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        font-size: 18px;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .total-box {
+        background: #eef5ff;
+        border: 1px solid #cfe0ff;
+        border-radius: 12px;
+        padding: 18px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .total-label {
+        color: #24508c;
+        font-weight: 700;
+    }
+
+    .total-amount {
+        color: #172033;
+        font-size: 26px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .section-title {
+        margin: 0 0 7px;
+        font-size: 23px;
+    }
+
+    .section-note {
+        color: #667085;
+        margin: 0 0 18px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e1e5ec;
+        border-radius: 10px;
+    }
+
+    .games-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .games-table th {
+        text-align: left;
+        background: #f2f4f7;
+        color: #344054;
+        padding: 13px;
+        border-bottom: 1px solid #dfe3e8;
+        white-space: nowrap;
+    }
+
+    .games-table td {
+        padding: 13px;
+        border-bottom: 1px solid #e1e5ec;
+        vertical-align: middle;
+    }
+
+    .games-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .paid-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #15803d;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #1769e0;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #e9ecef;
+        color: #343a40;
+    }
+
+    .empty {
+        padding: 25px;
+        text-align: center;
+        color: #667085;
+    }
+
+    @media (max-width: 850px) {
+        .success-page { padding: 15px; }
+        .success-card { padding: 20px; }
+        .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        .total-box { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (max-width: 500px) {
+        .summary-grid { grid-template-columns: 1fr; }
+        .success-header h1 { font-size: 27px; }
+        .actions { flex-direction: column; }
+        .btn { text-align: center; }
+    }
+
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 12mm;
+        }
+
+        body { background: white !important; }
+
+        .success-page {
+            padding: 0 !important;
+            background: white !important;
+            min-height: auto !important;
+        }
+
+        .success-card {
+            max-width: none !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .no-print, .actions, .success-icon {
+            display: none !important;
+        }
+
+        .print-header {
+            display: block !important;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(5, 1fr) !important;
+            margin: 10px 0 16px !important;
+        }
+
+        .summary-box { padding: 9px !important; }
+
+        .official-summary, .games-section {
+            break-inside: avoid;
+        }
+
+        .official-table, .games-table {
+            min-width: 0 !important;
+            font-size: 10px !important;
+        }
+
+        .official-table th, .official-table td,
+        .games-table th, .games-table td {
+            padding: 7px !important;
+        }
+
+        .total-box {
+            margin-bottom: 16px !important;
+            padding: 12px 15px !important;
+        }
+    }
+
+    .print-header {
+        display: none;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .print-header h2 {
+        margin: 0 0 4px;
+        font-size: 24px;
+    }
+
+    .print-header p {
+        margin: 0;
+        color: #667085;
+    }
+
+    .official-summary {
+        margin-top: 35px;
+    }
+
+    .official-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .official-table th {
+        text-align: left;
+        background: #f2f4f7;
+        color: #344054;
+        padding: 13px;
+        border-bottom: 1px solid #dfe3e8;
+        white-space: nowrap;
+    }
+
+    .official-table td {
+        padding: 13px;
+        border-bottom: 1px solid #e1e5ec;
+        vertical-align: middle;
+    }
+
+    .official-total-row td {
+        background: #eef5ff;
+        font-weight: 800;
+        border-top: 2px solid #cfe0ff;
+    }
+
+    .print-button {
+        background: #1769e0;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+</style>
+
+<div class="success-page">
+    <div class="success-card">
+        <div class="print-header">
+            <h2>ARAB - OFFICIAL PAYMENT SUMMARY</h2>
+            <p>Payment Reference: <%= paymentReference || '-' %> | Payment ID: #<%= paymentId || '-' %></p>
+        </div>
+        <div class="success-header">
+            <div class="success-icon">✓</div>
+            <h1>Payment Successful</h1>
+            <p>The selected games have been successfully recorded as paid.</p>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-box">
+                <span class="summary-label">Payment Reference</span>
+                <span class="summary-value"><%= paymentReference || '-' %></span>
+            </div>
+
+            <div class="summary-box">
+                <span class="summary-label">Payment ID</span>
+                <span class="summary-value">#<%= paymentId || '-' %></span>
+            </div>
+
+            <div class="summary-box">
+                <span class="summary-label">Games Paid</span>
+                <span class="summary-value"><%= gameCount || 0 %></span>
+            </div>
+
+            <div class="summary-box">
+                <span class="summary-label">Payment Method</span>
+                <span class="summary-value"><%= paymentMethod || 'Manual' %></span>
+            </div>
+
+            <div class="summary-box">
+                <span class="summary-label">Paid At</span>
+                <span class="summary-value">
+                    <%= paidAt ? new Date(paidAt).toLocaleString('en-GB') : '-' %>
+                </span>
+            </div>
+        </div>
+
+        <div class="total-box">
+            <span class="total-label">TOTAL PAYMENT</span>
+            <span class="total-amount"><%= Number(totalAmount || 0).toLocaleString('en-RW') %> RWF</span>
+        </div>
+
+
+        <div class="official-summary">
+            <h2 class="section-title">Official Payment Summary</h2>
+            <p class="section-note">
+                This is the official payment breakdown recorded for this transaction.
+            </p>
+
+            <% if (paymentSummary && paymentSummary.length) { %>
+                <div class="table-wrap">
+                    <table class="official-table">
+                        <thead>
+                            <tr>
+                                <th>Official</th>
+                                <th>Category</th>
+                                <th>Number of Games</th>
+                                <th>Rate / Game</th>
+                                <th>Total Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% paymentSummary.forEach(item => { %>
+                                <tr>
+                                    <td><strong><%= item.fullname || '-' %></strong></td>
+                                    <td><%= item.category || '-' %></td>
+                                    <td><%= item.games || 0 %></td>
+                                    <td><%= Number(item.rate || 0).toLocaleString('en-RW') %> RWF</td>
+                                    <td><strong><%= Number(item.total || 0).toLocaleString('en-RW') %> RWF</strong></td>
+                                </tr>
+                            <% }) %>
+                            <tr class="official-total-row">
+                                <td colspan="2">TOTAL</td>
+                                <td><%= paymentSummary.reduce((sum, item) => sum + Number(item.games || 0), 0) %></td>
+                                <td>—</td>
+                                <td><%= Number(summaryTotal || totalAmount || 0).toLocaleString('en-RW') %> RWF</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="empty">No official payment items were found for this transaction.</div>
+            <% } %>
+        </div>
+
+        <h2 class="section-title">Games Paid</h2>
+        <p class="section-note">The following games were included in this payment transaction.</p>
+
+        <% if (paidGames && paidGames.length) { %>
+            <div class="table-wrap">
+                <table class="games-table">
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Match</th>
+                            <th>Date</th>
+                            <th>Competition</th>
+                            <th>Season</th>
+                            <th>Court</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% paidGames.forEach(game => { %>
+                            <tr>
+                                <td><strong>#<%= game.gameid %></strong></td>
+                                <td><strong><%= game.teama || '-' %> vs <%= game.teamb || '-' %></strong></td>
+                                <td><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></td>
+                                <td><%= game.competition || '-' %></td>
+                                <td><%= game.season || '-' %></td>
+                                <td><%= game.court || '-' %></td>
+                                <td><span class="paid-badge">PAID</span></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="empty">No game details were returned for this payment.</div>
+        <% } %>
+
+        <div class="actions no-print">
+            <button type="button" class="btn print-button" onclick="window.print()">Print / Save as PDF</button>
+            <a href="/finance" class="btn btn-secondary">Back to Finance</a>
+            <a href="/finance/payment" class="btn btn-primary">Return to Payment</a>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

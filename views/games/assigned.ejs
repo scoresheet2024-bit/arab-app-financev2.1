@@ -1,0 +1,177 @@
+<%- include('../partials/navigation') %>
+<link rel="stylesheet" href="/css/arab-assigned-games.css">
+<%
+    const assignedGames = Array.isArray(games) ? games : [];
+    const user = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+    const role = String(user?.actualRole || user?.role || '').trim().toLowerCase();
+    const canSubmitCount = assignedGames.filter(game => Boolean(game.can_report)).length;
+    const formatDate = (value) => value
+        ? new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        : '-';
+%>
+
+<main class="arab-page arab-assigned-page">
+    <section class="arab-page-heading">
+        <div>
+            <div class="arab-eyebrow">GAME MANAGEMENT</div>
+            <h1>Assigned Games</h1>
+            <p>View all assigned games and submit reports for games assigned to you.</p>
+        </div>
+        <a class="arab-btn arab-btn-secondary" href="/games">← Games</a>
+    </section>
+
+    <section class="arab-assigned-kpis" aria-label="Assigned games summary">
+        <article class="arab-assigned-kpi arab-assigned-kpi-blue">
+            <div class="arab-assigned-kpi-icon">▣</div>
+            <div><span>Assigned Games</span><strong><%= assignedGames.length %></strong><small>Games currently assigned</small></div>
+        </article>
+        <article class="arab-assigned-kpi arab-assigned-kpi-yellow">
+            <div class="arab-assigned-kpi-icon">◷</div>
+            <div><span>Awaiting Reports</span><strong><%= assignedGames.filter(game => !game.report_submitted).length %></strong><small>Reports still required</small></div>
+        </article>
+        <article class="arab-assigned-kpi arab-assigned-kpi-green">
+            <div class="arab-assigned-kpi-icon">✓</div>
+            <div><span>Reports I Can Submit</span><strong><%= canSubmitCount %></strong><small><%= role === 'admin' ? 'Administrator access' : 'Based on your assignments' %></small></div>
+        </article>
+    </section>
+
+    <section class="arab-card arab-assigned-card">
+        <div class="arab-card-header arab-assigned-header">
+            <div>
+                <h2>Assigned Games</h2>
+                <p>All assigned games are visible. Report access is limited to the assigned official or administrator.</p>
+            </div>
+            <span class="arab-count-badge"><%= assignedGames.length %> game<%= assignedGames.length === 1 ? '' : 's' %></span>
+        </div>
+
+        <% if (assignedGames.length === 0) { %>
+            <div class="arab-empty-state arab-assigned-empty">
+                <div class="arab-empty-icon">✓</div>
+                <h3>No assigned games</h3>
+                <p>There are currently no assigned games awaiting reports.</p>
+                <a class="arab-btn arab-btn-primary" href="/games">Back to Games</a>
+            </div>
+        <% } else { %>
+            <div class="arab-assigned-toolbar">
+                <div class="arab-filter-search">
+                    <span aria-hidden="true">⌕</span>
+                    <input id="assignedGameSearch" type="search" placeholder="Search teams, competition, court or game ID..." autocomplete="off">
+                </div>
+                <select id="assignedAccessFilter" class="arab-filter-select" aria-label="Filter report access">
+                    <option value="all">All games</option>
+                    <option value="can-report">Can submit report</option>
+                    <option value="view-only">View only</option>
+                </select>
+            </div>
+
+            <div class="arab-assigned-table-wrap">
+                <table class="arab-assigned-table" id="assignedGamesTable">
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Competition</th>
+                            <th>Date &amp; Time</th>
+                            <th>Court</th>
+                            <th>Officials</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <% assignedGames.forEach(game => { 
+                        const searchText = [
+                            game.gameid, game.competition, game.season,
+                            game.teama, game.teamb, game.court,
+                            game.referee1, game.umpire1, game.umpire2,
+                            game.scorer, game.timer, game.shot_clock_operator,
+                            game.assistant_scorer, game.commissioner
+                        ].filter(Boolean).join(' ').toLowerCase();
+                    %>
+                        <tr class="arab-assigned-row" data-search="<%= searchText.replace(/&/g, '&amp;').replace(/"/g, '&quot;') %>" data-access="<%= game.can_report ? 'can-report' : 'view-only' %>">
+                            <td data-label="Game">
+                                <div class="arab-game-id">#<%= game.gameid %></div>
+                                <div class="arab-matchup"><strong><%= game.teama %></strong><span>vs</span><strong><%= game.teamb %></strong></div>
+                            </td>
+                            <td data-label="Competition">
+                                <strong><%= game.competition || 'No competition' %></strong>
+                                <span class="arab-cell-muted"><%= game.season || '' %></span>
+                            </td>
+                            <td data-label="Date & Time">
+                                <strong><%= formatDate(game.gamedate) %></strong>
+                                <span class="arab-cell-muted"><%= game.gametime || '-' %></span>
+                            </td>
+                            <td data-label="Court"><%= game.court || '-' %></td>
+                            <td data-label="Officials">
+                                <div class="arab-official-list">
+                                    <span><b>Ref:</b> <%= game.referee1 || '-' %></span>
+                                    <span><b>U1:</b> <%= game.umpire1 || '-' %></span>
+                                    <span><b>U2:</b> <%= game.umpire2 || '-' %></span>
+                                    <details>
+                                        <summary>More officials</summary>
+                                        <span><b>Scorer:</b> <%= game.scorer || '-' %></span>
+                                        <span><b>Timer:</b> <%= game.timer || '-' %></span>
+                                        <span><b>Shot Clock:</b> <%= game.shot_clock_operator || '-' %></span>
+                                        <span><b>Assistant:</b> <%= game.assistant_scorer || '-' %></span>
+                                        <span><b>Commissioner:</b> <%= game.commissioner || '-' %></span>
+                                    </details>
+                                </div>
+                            </td>
+                            <td data-label="Status">
+                                <% if (game.report_submitted) { %>
+                                    <span class="arab-status arab-status-success">Report Submitted</span>
+                                <% } else { %>
+                                    <span class="arab-status arab-status-warning">Awaiting Report</span>
+                                <% } %>
+                            </td>
+                            <td data-label="Action">
+                                <% if (game.can_report) { %>
+                                    <a class="arab-btn arab-btn-primary arab-btn-sm arab-report-btn" href="/games/report/<%= game.gameid %>">
+                                        <%= game.report_submitted ? 'View Report' : 'Submit Report' %>
+                                    </a>
+                                <% } else { %>
+                                    <span class="arab-access-badge">View only</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="assignedNoResults" class="arab-filter-empty" hidden>
+                <strong>No games match your search.</strong>
+                <span>Try another team, competition, court or game ID.</span>
+            </div>
+        <% } %>
+    </section>
+</main>
+
+<script>
+(function () {
+    const search = document.getElementById('assignedGameSearch');
+    const access = document.getElementById('assignedAccessFilter');
+    const rows = Array.from(document.querySelectorAll('.arab-assigned-row'));
+    const empty = document.getElementById('assignedNoResults');
+
+    if (!search || !access || !rows.length) return;
+
+    function applyFilters() {
+        const query = search.value.trim().toLowerCase();
+        const accessValue = access.value;
+        let visible = 0;
+
+        rows.forEach(row => {
+            const matchesSearch = !query || row.dataset.search.includes(query);
+            const matchesAccess = accessValue === 'all' || row.dataset.access === accessValue;
+            const show = matchesSearch && matchesAccess;
+            row.hidden = !show;
+            if (show) visible += 1;
+        });
+
+        if (empty) empty.hidden = visible !== 0;
+    }
+
+    search.addEventListener('input', applyFilters);
+    access.addEventListener('change', applyFilters);
+})();
+</script>

@@ -1,0 +1,199 @@
+<%- include('../partials/header', {
+    title: 'Add New Official'
+}) %>
+
+
+<%- include('../partials/navigation') %>
+
+
+<div class="arab-page">
+
+
+    <a
+        href="/officials"
+        class="back-button"
+    >
+        ← Back to Officials
+    </a>
+
+
+    <h1 class="page-title">
+        Add New Official
+    </h1>
+
+
+    <div class="subtitle">
+        Add an official manually to the ARAB database
+    </div>
+
+
+    <div
+        style="
+            background: white;
+            border: 1px solid #e1e5ec;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+        "
+    >
+
+
+        <form
+            action="/officials"
+            method="POST"
+        >
+
+
+            <!-- FULL NAME -->
+
+            <label
+                for="fullname"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Full Name
+            </label>
+
+
+            <input
+                id="fullname"
+                type="text"
+                name="fullname"
+                placeholder="Enter full name"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 18px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- ROLE -->
+
+            <label
+                for="role"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Role
+            </label>
+
+
+            <input
+                id="role"
+                type="text"
+                name="role"
+                value="Referee"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 18px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- PHONE -->
+
+            <label
+                for="phone"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Phone
+            </label>
+
+
+            <input
+                id="phone"
+                type="text"
+                name="phone"
+                placeholder="Enter phone number"
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 18px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- EMAIL -->
+
+            <label
+                for="email"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Email
+            </label>
+
+
+            <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="Enter email"
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 25px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- BUTTONS -->
+
+            <button
+                type="submit"
+                class="button button-success"
+            >
+                Save Official
+            </button>
+
+
+            <a
+                href="/officials"
+                class="button button-secondary"
+                style="
+                    margin-left: 10px;
+                "
+            >
+                Cancel
+            </a>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,403 @@
+/* =========================================================
+   ARAB ASSIGNED GAMES — page-specific design
+   Uses the shared ARAB design/layout foundation.
+   ========================================================= */
+
+.arab-assigned-page {
+    padding-bottom: 34px;
+}
+
+.arab-page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 22px;
+}
+
+.arab-page-heading h1 {
+    margin: 4px 0 6px;
+    font-size: 32px;
+    line-height: 1.15;
+    color: #09285f;
+    letter-spacing: -0.02em;
+}
+
+.arab-page-heading p,
+.arab-card-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+.arab-assigned-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.arab-assigned-kpi {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 112px;
+    padding: 20px;
+    border: 1px solid #e6ebf2;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(16, 45, 82, 0.05);
+}
+
+.arab-assigned-kpi-icon {
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.arab-assigned-kpi span {
+    display: block;
+    color: #475467;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.arab-assigned-kpi strong {
+    display: block;
+    color: #09285f;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.arab-assigned-kpi small {
+    display: block;
+    color: #98a2b3;
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+.arab-assigned-kpi-blue .arab-assigned-kpi-icon { background: #e8f1ff; color: #1261c9; }
+.arab-assigned-kpi-yellow .arab-assigned-kpi-icon { background: #fff4d8; color: #c58a00; }
+.arab-assigned-kpi-green .arab-assigned-kpi-icon { background: #e1f7eb; color: #079455; }
+
+.arab-assigned-card {
+    overflow: hidden;
+}
+
+.arab-assigned-header {
+    align-items: center;
+    gap: 18px;
+}
+
+.arab-assigned-header h2 {
+    margin-bottom: 5px;
+}
+
+.arab-count-badge {
+    flex: 0 0 auto;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: #edf4ff;
+    color: #1261c9;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arab-assigned-toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 16px 20px;
+    border-top: 1px solid #edf1f5;
+    border-bottom: 1px solid #edf1f5;
+    background: #fbfcfe;
+}
+
+.arab-filter-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: 1 1 auto;
+    min-width: 220px;
+    height: 42px;
+    padding: 0 13px;
+    border: 1px solid #d8e0ea;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.arab-filter-search span {
+    color: #667085;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.arab-filter-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #172b4d;
+    font: inherit;
+    font-size: 13px;
+}
+
+.arab-filter-select {
+    width: 190px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #d8e0ea;
+    border-radius: 9px;
+    background: #fff;
+    color: #344054;
+    font: inherit;
+    font-size: 13px;
+    outline: 0;
+}
+
+.arab-assigned-table-wrap {
+    overflow-x: auto;
+}
+
+.arab-assigned-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.arab-assigned-table th {
+    padding: 13px 16px;
+    text-align: left;
+    white-space: nowrap;
+    background: #f7f9fc;
+    border-bottom: 1px solid #e4e9f0;
+    color: #344054;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+}
+
+.arab-assigned-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid #edf1f5;
+    color: #344054;
+    font-size: 13px;
+    vertical-align: top;
+}
+
+.arab-assigned-table tbody tr:hover {
+    background: #fbfdff;
+}
+
+.arab-game-id {
+    margin-bottom: 5px;
+    color: #1261c9;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.arab-matchup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 135px;
+    color: #172b4d;
+}
+
+.arab-matchup span {
+    color: #98a2b3;
+    font-size: 11px;
+}
+
+.arab-cell-muted {
+    display: block;
+    margin-top: 4px;
+    color: #98a2b3;
+    font-size: 11px;
+}
+
+.arab-official-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 205px;
+    color: #475467;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.arab-official-list b {
+    color: #344054;
+}
+
+.arab-official-list details {
+    margin-top: 2px;
+}
+
+.arab-official-list summary {
+    cursor: pointer;
+    color: #1261c9;
+    font-weight: 700;
+}
+
+.arab-official-list details span {
+    display: block;
+    margin-top: 3px;
+}
+
+.arab-status {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 6px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.arab-status-warning {
+    background: #fff4d8;
+    color: #9a6700;
+}
+
+.arab-status-success {
+    background: #e1f7eb;
+    color: #067647;
+}
+
+.arab-report-btn {
+    white-space: nowrap;
+}
+
+.arab-access-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 9px;
+    border-radius: 8px;
+    background: #f2f4f7;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.arab-filter-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: #667085;
+}
+
+.arab-filter-empty strong,
+.arab-filter-empty span {
+    display: block;
+}
+
+.arab-filter-empty strong {
+    color: #344054;
+    margin-bottom: 5px;
+}
+
+.arab-filter-empty span {
+    font-size: 13px;
+}
+
+.arab-assigned-empty {
+    padding: 58px 20px;
+}
+
+@media (max-width: 980px) {
+    .arab-assigned-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .arab-page-heading {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 680px) {
+    .arab-page-heading {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .arab-page-heading h1 {
+        font-size: 27px;
+    }
+
+    .arab-assigned-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .arab-filter-select {
+        width: 100%;
+    }
+
+    .arab-assigned-table {
+        min-width: 0;
+    }
+
+    .arab-assigned-table thead {
+        display: none;
+    }
+
+    .arab-assigned-table,
+    .arab-assigned-table tbody,
+    .arab-assigned-table tr,
+    .arab-assigned-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .arab-assigned-table tr {
+        padding: 15px;
+        border-bottom: 1px solid #e5eaf0;
+        background: #fff;
+    }
+
+    .arab-assigned-table td {
+        display: grid;
+        grid-template-columns: 105px minmax(0, 1fr);
+        gap: 10px;
+        padding: 8px 0;
+        border: 0;
+        font-size: 13px;
+    }
+
+    .arab-assigned-table td::before {
+        content: attr(data-label);
+        color: #667085;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .arab-assigned-table td[data-label="Game"] {
+        display: block;
+        padding-bottom: 12px;
+    }
+
+    .arab-assigned-table td[data-label="Game"]::before {
+        display: none;
+    }
+
+    .arab-assigned-table td[data-label="Action"] {
+        padding-top: 12px;
+    }
+
+    .arab-report-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .arab-official-list {
+        min-width: 0;
+    }
+}

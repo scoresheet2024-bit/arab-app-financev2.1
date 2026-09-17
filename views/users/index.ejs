@@ -1,0 +1,61 @@
+<%- include('../partials/header', { title: 'User Management' }) %>
+<%- include('../partials/navigation') %>
+
+<div class="page">
+    <h1>User Management</h1>
+    <p class="subtitle">Create and manage accounts that can access the ARAB Reporting System.</p>
+
+    <p>
+        <a href="/users/new" class="button button-primary">➕ Add User</a>
+    </p>
+
+    <div class="section">
+        <% if (!users || users.length === 0) { %>
+            <p>No users found.</p>
+        <% } else { %>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Official</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user => { %>
+                            <tr>
+                                <td><strong><%= user.username %></strong></td>
+                                <td><%= user.fullname %></td>
+                                <td><%= user.role %></td>
+                                <td><%= user.official_name || '-' %></td>
+                                <td>
+                                    <% if (user.is_active) { %>
+                                        <span class="assigned">Active</span>
+                                    <% } else { %>
+                                        <span class="pending">Inactive</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <a class="button button-secondary" href="/users/edit/<%= user.userid %>">Edit</a>
+                                    <% if (user.userid !== currentUser.userid) { %>
+                                        <form action="/users/<%= user.userid %>/toggle" method="POST" style="display:inline;">
+                                            <button type="submit" class="button <%= user.is_active ? 'button-danger' : 'button-success' %>">
+                                                <%= user.is_active ? 'Deactivate' : 'Activate' %>
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

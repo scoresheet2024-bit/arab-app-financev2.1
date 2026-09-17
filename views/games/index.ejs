@@ -1,0 +1,164 @@
+<%- include('../partials/navigation') %>
+
+<%
+    const gameUser = (typeof currentUser !== 'undefined' && currentUser)
+        ? currentUser
+        : (typeof user !== 'undefined' && user ? user : null);
+    const gameRole = String(gameUser?.actualRole || gameUser?.role || '').trim().toLowerCase();
+    const canManageGames = ['admin', 'to', 'technical official', 'technical_official', 'technical-official'].includes(gameRole);
+%>
+
+<link rel="stylesheet" href="/css/arab-games.css">
+
+<main class="arab-page arab-games-page">
+    <section class="arab-page-heading games-heading">
+        <div>
+            <div class="arab-eyebrow">ARAB MANAGEMENT SYSTEM</div>
+            <h1 class="page-title">Games</h1>
+            <p class="arab-page-subtitle">Manage pending games and assign officials</p>
+        </div>
+
+        <% if (canManageGames) { %>
+            <a href="/games/new" class="arab-btn arab-btn-primary games-create-btn">
+                <span aria-hidden="true">＋</span> Create Game
+            </a>
+        <% } %>
+    </section>
+
+    <section class="games-summary-grid" aria-label="Games summary">
+        <div class="arab-card games-summary-card">
+            <div class="games-summary-icon games-icon-blue" aria-hidden="true">◉</div>
+            <div>
+                <span class="games-summary-label">Pending Games</span>
+                <strong><%= games ? games.length : 0 %></strong>
+                <small>Awaiting assignment</small>
+            </div>
+        </div>
+
+        <div class="arab-card games-summary-card">
+            <div class="games-summary-icon games-icon-yellow" aria-hidden="true">▣</div>
+            <div>
+                <span class="games-summary-label">Next Game</span>
+                <strong class="games-summary-date">
+                    <% if (games && games.length && games[0].gamedate) { %>
+                        <%= new Date(games[0].gamedate).toLocaleDateString('en-GB') %>
+                    <% } else { %>
+                        —
+                    <% } %>
+                </strong>
+                <small><%= games && games.length ? (games[0].competition || 'No competition') : 'No pending games' %></small>
+            </div>
+        </div>
+
+        <div class="arab-card games-summary-card">
+            <div class="games-summary-icon games-icon-green" aria-hidden="true">✓</div>
+            <div>
+                <span class="games-summary-label">Assignment Status</span>
+                <strong>Awaiting</strong>
+                <small>Officials to be assigned</small>
+            </div>
+        </div>
+    </section>
+
+    <section class="arab-card games-list-card">
+        <div class="arab-card-header games-list-header">
+            <div>
+                <h2 class="games-section-title"><span aria-hidden="true">▦</span> Pending Games</h2>
+                <p class="games-section-subtitle">Games currently awaiting official assignment</p>
+            </div>
+            <span class="games-count-badge"><%= games ? games.length : 0 %> games</span>
+        </div>
+
+        <% if (!games || games.length === 0) { %>
+            <div class="games-empty-state">
+                <div class="games-empty-icon" aria-hidden="true">✓</div>
+                <h3>No pending games</h3>
+                <p>There are currently no games awaiting assignment.</p>
+                <% if (canManageGames) { %>
+                    <a href="/games/new" class="arab-btn arab-btn-primary">Create a Game</a>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="games-table-wrap">
+                <table class="arab-table games-table">
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Competition</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Court</th>
+                            <th>Status</th>
+                            <th class="games-action-col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% games.forEach(game => { %>
+                            <tr>
+                                <td data-label="Game">
+                                    <div class="game-match-cell">
+                                        <strong><%= game.teama || '-' %></strong>
+                                        <span>vs</span>
+                                        <strong><%= game.teamb || '-' %></strong>
+                                        <small>Game #<%= game.gameid %></small>
+                                    </div>
+                                </td>
+                                <td data-label="Competition">
+                                    <div class="game-competition-cell">
+                                        <strong><%= game.competition || '-' %></strong>
+                                        <small>Season <%= game.season || '-' %></small>
+                                    </div>
+                                </td>
+                                <td data-label="Date">
+                                    <%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %>
+                                </td>
+                                <td data-label="Time"><%= game.gametime || '-' %></td>
+                                <td data-label="Court"><%= game.court || '-' %></td>
+                                <td data-label="Status">
+                                    <span class="arab-status arab-status-awaiting">Awaiting Assignment</span>
+                                </td>
+                                <td data-label="Action" class="games-action-cell">
+                                    <% if (canManageGames) { %>
+                                        <a href="/games/assign/<%= game.gameid %>" class="arab-btn arab-btn-primary arab-btn-small">
+                                            Assign Officials
+                                        </a>
+                                    <% } else { %>
+                                        <span class="games-view-only">View only</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="games-mobile-list">
+                <% games.forEach(game => { %>
+                    <article class="games-mobile-card">
+                        <div class="games-mobile-card-top">
+                            <span class="games-game-id">Game #<%= game.gameid %></span>
+                            <span class="arab-status arab-status-awaiting">Awaiting Assignment</span>
+                        </div>
+                        <div class="games-mobile-match">
+                            <strong><%= game.teama || '-' %></strong>
+                            <span>VS</span>
+                            <strong><%= game.teamb || '-' %></strong>
+                        </div>
+                        <div class="games-mobile-details">
+                            <div><span>Competition</span><strong><%= game.competition || '-' %></strong></div>
+                            <div><span>Season</span><strong><%= game.season || '-' %></strong></div>
+                            <div><span>Date</span><strong><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></strong></div>
+                            <div><span>Time</span><strong><%= game.gametime || '-' %></strong></div>
+                            <div><span>Court</span><strong><%= game.court || '-' %></strong></div>
+                        </div>
+                        <% if (canManageGames) { %>
+                            <a href="/games/assign/<%= game.gameid %>" class="arab-btn arab-btn-primary games-mobile-action">Assign Officials</a>
+                        <% } %>
+                    </article>
+                <% }); %>
+            </div>
+        <% } %>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>

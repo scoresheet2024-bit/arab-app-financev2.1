@@ -1,0 +1,229 @@
+<%- include('../partials/header', { title: 'Finance' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+    .finance-page { padding: 30px; background: #f7f9fc; min-height: calc(100vh - 68px); color: #172033; }
+    .finance-page h1 { margin: 0 0 8px; font-size: 36px; }
+    .finance-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 28px; }
+    .finance-header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .history-button { display: inline-block; border: 1px solid #ccd2da; border-radius: 8px; padding: 12px 18px; background: white; color: #344054; text-decoration: none; font-weight: 700; }
+    .history-button:hover { background: #f8fafc; }
+    .finance-header .proceed-button { margin-top: 0; }
+    @media (max-width: 700px) { .finance-header { flex-direction: column; } .finance-header-actions { width: 100%; } }
+    .finance-subtitle { color: #667085; font-size: 18px; margin-bottom: 28px; }
+    .finance-card { background: white; border: 1px solid #e1e5ec; border-radius: 14px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,.04); }
+    .finance-filters { background: #f8fafc; border: 1px solid #e1e5ec; border-radius: 12px; padding: 18px; }
+    .finance-search { width: 100%; padding: 14px 16px; border: 1px solid #ccd2da; border-radius: 8px; font-size: 16px; margin-bottom: 14px; }
+    .finance-filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .finance-filter { padding: 11px 13px; border: 1px solid #ccd2da; border-radius: 8px; font-size: 15px; background: white; min-width: 220px; }
+    .finance-count { font-weight: bold; color: #667085; padding: 10px; }
+    .finance-table-wrap { overflow-x: auto; }
+    .finance-table { width: 100%; border-collapse: collapse; }
+    .finance-table th { text-align: left; background: #f2f4f7; color: #344054; padding: 13px; border-bottom: 1px solid #dfe3e8; white-space: nowrap; }
+    .finance-table td { padding: 13px; border-bottom: 1px solid #e1e5ec; vertical-align: middle; }
+    .finance-table tr:hover { background: #fafbfc; }
+    .game-checkbox { width: 18px; height: 18px; cursor: pointer; }
+    .status-completed { display: inline-block; padding: 6px 11px; border-radius: 20px; background: #dcfce7; color: #15803d; font-weight: bold; }
+    .status-paid {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .status-paid:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(29, 78, 216, .18);
+    }
+    .status-unpaid { display: inline-block; padding: 6px 11px; border-radius: 20px; background: #fef3c7; color: #b45309; font-weight: bold; }
+    .finance-actions { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+    .selected-label { color: #667085; font-weight: bold; }
+    .proceed-button { border: none; border-radius: 8px; padding: 12px 20px; background: #1769e0; color: white; font-weight: bold; font-size: 15px; cursor: pointer; }
+    .proceed-button:disabled { background: #b8c0cc; cursor: not-allowed; }
+    .select-all-label { font-weight: bold; display: inline-flex; align-items: center; gap: 8px; }
+    .empty-row { text-align: center; color: #667085; padding: 30px !important; }
+    @media (max-width: 700px) { .finance-page { padding: 15px; } .finance-filter { width: 100%; } }
+</style>
+
+<%
+    // Finance actions are available only to Admin and Finance users.
+    // Other roles may see the page but cannot open Payment History or proceed to payment.
+    const financeActionRole = String(currentUser?.actualRole || currentUser?.role || '').toLowerCase();
+    const canUseFinanceActions = ['admin', 'finance'].includes(financeActionRole);
+%>
+
+<style>
+    .finance-action-disabled {
+        opacity: 0.55;
+        cursor: not-allowed !important;
+        pointer-events: none;
+    }
+    .history-button.finance-action-disabled {
+        background: #f2f4f7;
+        color: #98a2b3;
+        border-color: #d0d5dd;
+    }
+</style>
+
+<div class="finance-page">
+    <div class="finance-header">
+        <div>
+            <h1>Finance</h1>
+            <div class="finance-subtitle">Select completed games and prepare official payments.</div>
+        </div>
+        <div class="finance-header-actions">
+            <% if (canUseFinanceActions) { %>
+                <a href="/finance/history" class="history-button">Payment History</a>
+            <% } else { %>
+                <span class="history-button finance-action-disabled"
+                      aria-disabled="true"
+                      title="Payment History is available to Finance users only">
+                    Payment History
+                </span>
+            <% } %>
+            <button type="submit"
+                    form="financeForm"
+                    class="proceed-button <%= canUseFinanceActions ? '' : 'finance-action-disabled' %>"
+                    id="topProceedButton"
+                    <%= canUseFinanceActions ? 'disabled' : 'disabled' %>
+                    <%= canUseFinanceActions ? '' : 'aria-disabled="true" title="Payment is available to Finance users only"' %>>
+                Proceed to Payment
+            </button>
+        </div>
+    </div>
+    <form id="financeForm" method="POST" action="/finance/payment">
+        <div class="finance-card">
+            <div class="finance-table-wrap">
+                <table class="finance-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="select-all-label">
+                                    <input type="checkbox" id="selectAll" class="game-checkbox">
+                                    Select
+                                </label>
+                            </th>
+                            <th>Date</th>
+                            <th>Match</th>
+                            <th>Competition</th>
+                            <th>Season</th>
+                            <th>Officials</th>
+                            <th>Report Status</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="financeTableBody">
+                        <% if (games.length === 0) { %>
+                            <tr><td colspan="8" class="empty-row">No completed games are available for Finance.</td></tr>
+                        <% } %>
+
+                        <% games.forEach(game => { %>
+                            <tr class="finance-row"
+                                data-search="<%= [game.teama, game.teamb, game.competition, game.season, game.court].filter(Boolean).join(' ').toLowerCase() %>"
+                                data-competition="<%= String(game.competition || '').toLowerCase() %>"
+                                data-season="<%= String(game.season || '').toLowerCase() %>">
+                                <td>
+                                    <% if (String(game.payment_status).toUpperCase() !== 'PAID') { %>
+                                        <input type="checkbox" class="game-checkbox game-select" name="gameIds" value="<%= game.gameid %>">
+                                    <% } else { %>
+                                        <input type="checkbox" class="game-checkbox" disabled title="This game is already paid">
+                                    <% } %>
+                                </td>
+                                <td><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></td>
+                                <td><strong><%= game.teama %> vs <%= game.teamb %></strong></td>
+                                <td><%= game.competition || '-' %></td>
+                                <td><%= game.season || '-' %></td>
+                                <td><%= game.official_count || 0 %></td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td>
+                                    <% if (String(game.payment_status).toUpperCase() === 'PAID') { %>
+                                        <a class="status-paid"
+                                           href="/finance/payment-success/<%= game.paymentid %>"
+                                           title="View payment details">
+                                            Paid
+                                        </a>
+                                    <% } else { %>
+                                        <span class="status-unpaid">Unpaid</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="finance-actions">
+                <span id="selectedLabel" class="selected-label">0 game(s) selected</span>
+                <button id="proceedButton"
+                        class="proceed-button <%= canUseFinanceActions ? '' : 'finance-action-disabled' %>"
+                        type="submit"
+                        disabled
+                        <%= canUseFinanceActions ? '' : 'aria-disabled="true" title="Payment is available to Finance users only"' %>>
+                    Proceed to Payment
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const search = document.getElementById('financeSearch');
+    const competition = document.getElementById('competitionFilter');
+    const season = document.getElementById('seasonFilter');
+    const rows = Array.from(document.querySelectorAll('.finance-row'));
+    const checkboxes = Array.from(document.querySelectorAll('.game-select'));
+    const selectAll = document.getElementById('selectAll');
+    const proceed = document.getElementById('proceedButton');
+    const topProceedButton = document.getElementById('topProceedButton');
+    const selectedLabel = document.getElementById('selectedLabel');
+    const count = document.getElementById('financeCount');
+    const canUseFinanceActions = <%= canUseFinanceActions ? 'true' : 'false' %>;
+
+    function updateSelection() {
+        const selected = checkboxes.filter(cb => cb.checked);
+        proceed.disabled = !canUseFinanceActions || selected.length === 0;
+        if (topProceedButton) topProceedButton.disabled = !canUseFinanceActions || selected.length === 0;
+        selectedLabel.textContent = selected.length + ' game(s) selected';
+        selectAll.checked = checkboxes.length > 0 && checkboxes.every(cb => cb.checked);
+        selectAll.indeterminate = selected.length > 0 && selected.length < checkboxes.length;
+    }
+
+    function filterRows() {
+        const q = (search.value || '').toLowerCase().trim();
+        const c = (competition.value || '').toLowerCase();
+        const s = (season.value || '').toLowerCase();
+        let visible = 0;
+
+        rows.forEach(row => {
+            const matches = row.dataset.search.includes(q)
+                && (!c || row.dataset.competition === c)
+                && (!s || row.dataset.season === s);
+            row.style.display = matches ? '' : 'none';
+            if (matches) visible++;
+        });
+
+        count.textContent = visible + ' result(s)';
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateSelection));
+    selectAll.addEventListener('change', () => {
+        checkboxes.forEach(cb => {
+            if (cb.closest('tr').style.display !== 'none') cb.checked = selectAll.checked;
+        });
+        updateSelection();
+    });
+    search.addEventListener('input', filterRows);
+    competition.addEventListener('change', filterRows);
+    season.addEventListener('change', filterRows);
+
+    updateSelection();
+    filterRows();
+})();
+</script>
+
+<%- include('../partials/footer') %>

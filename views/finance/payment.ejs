@@ -1,0 +1,281 @@
+<%- include('../partials/header', { title: step === 'rates' ? 'Finance - Payment Rates' : 'Finance - Payment' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+    .payment-page { padding: 30px; background: #f7f9fc; min-height: calc(100vh - 68px); color: #172033; }
+    .payment-page h1 { margin: 0 0 8px; font-size: 36px; }
+    .subtitle { color: #667085; font-size: 18px; margin-bottom: 28px; }
+    .card { background: white; border: 1px solid #e1e5ec; border-radius: 14px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,.04); }
+    .card h2 { margin: 0 0 18px; font-size: 22px; }
+    .rate-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .rate-item { border: 1px solid #dfe3e8; border-radius: 10px; padding: 18px; background: #fafbfc; }
+    .rate-item label { display: block; font-weight: bold; margin-bottom: 8px; }
+    .rate-input { width: 100%; padding: 12px; border: 1px solid #ccd2da; border-radius: 8px; font-size: 18px; text-align: right; }
+    .rate-help { margin-top: 18px; color: #667085; font-size: 14px; }
+    .batch-games { margin-top: 22px; overflow-x: auto; }
+    .batch-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    .batch-table th { background: #f2f4f7; padding: 11px; border-bottom: 1px solid #dfe3e8; text-align: left; white-space: nowrap; }
+    .batch-table td { padding: 11px; border-bottom: 1px solid #e1e5ec; }
+    .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
+    .btn { padding: 12px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: bold; cursor: pointer; display: inline-block; }
+    .btn-primary { background: #1769e0; color: white; }
+    .btn-secondary { background: #e9ecef; color: #343a40; }
+    .btn-success { background: #198754; color: white; }
+    .section-note { color: #667085; margin-bottom: 18px; }
+
+    .game-card { background: white; border: 1px solid #e1e5ec; border-radius: 14px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,.04); overflow: hidden; }
+    .game-heading { padding: 18px 20px; background: #f2f4f7; border-bottom: 1px solid #dfe3e8; }
+    .game-title { font-size: 21px; font-weight: bold; }
+    .game-meta { color: #667085; margin-top: 6px; font-size: 14px; }
+    .game-table-wrap { overflow-x: auto; }
+    .game-table { width: 100%; border-collapse: collapse; min-width: 1250px; }
+    .game-table th { background: #f8f9fb; color: #344054; padding: 11px; border-bottom: 1px solid #dfe3e8; text-align: left; white-space: nowrap; font-size: 13px; }
+    .game-table td { padding: 11px; border-bottom: 1px solid #e1e5ec; vertical-align: top; font-size: 14px; }
+    .official-cell { min-width: 145px; }
+    .official-name { font-weight: 700; }
+    .official-role { color: #667085; font-size: 12px; margin-top: 3px; }
+    .category-badge { display: inline-block; margin-top: 5px; padding: 3px 7px; border-radius: 10px; background: #eef2ff; font-size: 11px; font-weight: bold; }
+    .summary-table { width: 100%; border-collapse: collapse; }
+    .summary-table th { background: #f2f4f7; padding: 12px; text-align: left; border-bottom: 1px solid #dfe3e8; }
+    .summary-table td { padding: 12px; border-bottom: 1px solid #e1e5ec; }
+    .summary-total { font-weight: bold; background: #f8f9fb; }
+    .grand-total { display: flex; justify-content: flex-end; align-items: center; gap: 18px; margin-top: 20px; font-size: 22px; font-weight: bold; }
+    .method { padding: 11px; border: 1px solid #ccd2da; border-radius: 8px; min-width: 220px; }
+    .empty { color: #667085; padding: 20px; }
+    @media (max-width: 800px) {
+        .payment-page { padding: 15px; }
+        .rate-grid { grid-template-columns: 1fr; }
+        .grand-total { justify-content: flex-start; flex-wrap: wrap; }
+    }
+</style>
+
+<div class="payment-page">
+
+<% if (step === 'rates') { %>
+
+    <h1>Payment Rates</h1>
+    <div class="subtitle">Confirm the payment rates for this payment batch before opening the payment page.</div>
+
+    <form method="POST" action="/finance/payment/apply">
+
+        <% gameIds.forEach(id => { %>
+            <input type="hidden" name="gameIds" value="<%= id %>">
+        <% }) %>
+
+        <div class="card">
+            <h2>Payment Rates</h2>
+            <div class="section-note">
+                These rates will apply only to the games selected for this payment batch. Changing them here does not change the master rates in Finance Settings.
+            </div>
+
+            <div class="rate-grid">
+                <div class="rate-item">
+                    <label for="referee_rate">Referee (RWF)</label>
+                    <input id="referee_rate" class="rate-input" type="number" name="referee_rate" min="0" step="1" value="<%= rates.Referee %>" required>
+                </div>
+
+                <div class="rate-item">
+                    <label for="to_rate">T.O (RWF)</label>
+                    <input id="to_rate" class="rate-input" type="number" name="to_rate" min="0" step="1" value="<%= rates['T.O'] %>" required>
+                </div>
+
+                <div class="rate-item">
+                    <label for="commissioner_rate">Commissioners (RWF)</label>
+                    <input id="commissioner_rate" class="rate-input" type="number" name="commissioner_rate" min="0" step="1" value="<%= rates.Commissioners %>" required>
+                </div>
+            </div>
+
+            <div class="rate-help">
+                Referee rate applies to Referee, Umpire 1, Umpire 2 and Standby Referee. T.O rate applies to Scorer, Timer, Shot Clock Operator and Assistant Scorer. Commissioners rate applies to Commissioner.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Selected Games</h2>
+            <div class="batch-games">
+                <table class="batch-table">
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Team A</th>
+                            <th>Team B</th>
+                            <th>Date</th>
+                            <th>Competition</th>
+                            <th>Season</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% games.forEach(game => { %>
+                            <tr>
+                                <td>#<%= game.gameid %></td>
+                                <td><strong><%= game.teama || '-' %></strong></td>
+                                <td><strong><%= game.teamb || '-' %></strong></td>
+                                <td><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></td>
+                                <td><%= game.competition || '-' %></td>
+                                <td><%= game.season || '-' %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <a href="/finance" class="btn btn-secondary">Back to Finance</a>
+                <button type="submit" class="btn btn-primary">Apply &amp; Open Payment</button>
+            </div>
+        </div>
+    </form>
+
+<% } else { %>
+
+    <h1>Payment</h1>
+    <div class="subtitle">Review the selected games, assigned officials and payment summary before processing.</div>
+
+    <form method="POST" action="/finance/payment/process" id="paymentForm">
+
+        <% gameIds.forEach(id => { %>
+            <input type="hidden" name="gameIds" value="<%= id %>">
+        <% }) %>
+
+        <input type="hidden" name="referee_rate" value="<%= rates.Referee %>">
+        <input type="hidden" name="to_rate" value="<%= rates['T.O'] %>">
+        <input type="hidden" name="commissioner_rate" value="<%= rates.Commissioners %>">
+
+        <div class="card">
+            <h2>Payment Rates Applied</h2>
+            <div class="rate-grid">
+                <div class="rate-item"><strong>Referee</strong><br><%= Number(rates.Referee).toLocaleString('en-RW') %> RWF</div>
+                <div class="rate-item"><strong>T.O</strong><br><%= Number(rates['T.O']).toLocaleString('en-RW') %> RWF</div>
+                <div class="rate-item"><strong>Commissioners</strong><br><%= Number(rates.Commissioners).toLocaleString('en-RW') %> RWF</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Official Payment Summary</h2>
+            <div class="section-note">This summary combines all selected games and shows the amount payable to each official.</div>
+
+            <% if (summary.length) { %>
+                <div class="game-table-wrap">
+                    <table class="summary-table">
+                        <thead>
+                            <tr>
+                                <th>Official</th>
+                                <th>Category</th>
+                                <th>Number of Games</th>
+                                <th>Rate / Game</th>
+                                <th>Total Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% summary.forEach(item => { %>
+                                <tr>
+                                    <td><strong><%= item.fullname %></strong></td>
+                                    <td><%= item.category %></td>
+                                    <td><%= item.games %></td>
+                                    <td><%= Number(item.rate).toLocaleString('en-RW') %> RWF</td>
+                                    <td><strong><%= Number(item.total).toLocaleString('en-RW') %> RWF</strong></td>
+                                </tr>
+                            <% }) %>
+                            <tr class="summary-total">
+                                <td colspan="2">TOTAL</td>
+                                <td><%= summary.reduce((sum, item) => sum + item.games, 0) %></td>
+                                <td>—</td>
+                                <td><%= Number(grandTotal).toLocaleString('en-RW') %> RWF</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="empty">No officials were found for the selected games.</div>
+            <% } %>
+
+            <div class="grand-total">
+                <span>Total Payment:</span>
+                <span><%= Number(grandTotal).toLocaleString('en-RW') %> RWF</span>
+            </div>
+        </div>
+        <% games.forEach(game => { %>
+            <% const items = officialsByGame[game.gameid] || []; %>
+            <% const byRole = {}; items.forEach(item => { byRole[String(item.role).toLowerCase()] = item; }); %>
+
+            <div class="game-card">
+                <div class="game-heading">
+                    <div class="game-title"><%= game.teama || '-' %> vs <%= game.teamb || '-' %></div>
+                    <div class="game-meta">
+                        Game #<%= game.gameid %> · <%= game.competition || '-' %> · Season <%= game.season || '-' %> · <%= game.court || '-' %> · <%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %>
+                    </div>
+                </div>
+
+                <div class="game-table-wrap">
+                    <table class="game-table">
+                        <thead>
+                            <tr>
+                                <th>Referee</th>
+                                <th>Umpire 1</th>
+                                <th>Umpire 2</th>
+                                <th>Standby Referee</th>
+                                <th>Scorer</th>
+                                <th>Timer</th>
+                                <th>Shot Clock</th>
+                                <th>Assistant Scorer</th>
+                                <th>Commissioner</th>
+                                <th>Team A</th>
+                                <th>Team B</th>
+                                <th>Court</th>
+                                <th>Date</th>
+                                <th>Competition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <% const displayRoles = ['referee','umpire 1','umpire 2','standby referee','scorer','timer','shot clock operator','assistant scorer','commissioner']; %>
+                                <% displayRoles.forEach(displayRole => { %>
+                                    <% const item = items.find(x => String(x.role).toLowerCase() === displayRole); %>
+                                    <td class="official-cell">
+                                        <% if (item) { %>
+                                            <div class="official-name"><%= item.fullname %></div>
+                                            <div class="official-role"><%= item.role %></div>
+                                            <span class="category-badge"><%= item.category %> · <%= Number(item.amount).toLocaleString('en-RW') %></span>
+                                            <input type="hidden" name="itemGameIds" value="<%= game.gameid %>">
+                                            <input type="hidden" name="officialIds" value="<%= item.officialid %>">
+                                            <input type="hidden" name="roles" value="<%= item.role %>">
+                                        <% } else { %>
+                                            <span class="empty">—</span>
+                                        <% } %>
+                                    </td>
+                                <% }) %>
+                                <td><%= game.teama || '-' %></td>
+                                <td><%= game.teamb || '-' %></td>
+                                <td><%= game.court || '-' %></td>
+                                <td><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></td>
+                                <td><%= game.competition || '-' %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% }) %>
+
+
+        <div class="card">
+            <label for="payment_method"><strong>Payment Method</strong></label>
+            <select id="payment_method" name="payment_method" class="method">
+                <option value="Manual">Manual</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Mobile Money">Mobile Money</option>
+                <option value="Cash">Cash</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <div class="actions">
+                <a href="/finance" class="btn btn-secondary">Back to Finance</a>
+                <button type="submit" class="btn btn-success">Process Payment</button>
+            </div>
+        </div>
+
+    </form>
+
+<% } %>
+</div>
+
+<%- include('../partials/footer') %>

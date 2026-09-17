@@ -1,0 +1,74 @@
+/* ARAB Officials page - approved clean management style */
+.arab-officials-page { max-width: 1600px; }
+.arab-page-heading.officials-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px; }
+.arab-eyebrow { color:var(--arab-yellow-dark); font-size:12px; font-weight:800; letter-spacing:.16em; margin-bottom:6px; }
+.officials-heading .page-title { margin-bottom:4px; }
+.officials-add-btn { white-space:nowrap; }
+
+.officials-list-card { overflow:hidden; }
+.officials-search-area { padding:22px 24px; border-bottom:1px solid var(--arab-border); background:#fff; }
+.officials-search-label { display:block; margin:0 0 8px; color:#344054; font-size:13px; font-weight:750; }
+.officials-search-wrap { position:relative; max-width:760px; }
+.officials-search { width:100%; min-height:48px; padding:11px 46px 11px 43px; border:1px solid #cbd6e3; border-radius:10px; background:#fbfcfe; color:var(--arab-ink); font-size:15px; }
+.officials-search:focus { background:#fff; }
+.officials-search-icon { position:absolute; left:15px; top:50%; transform:translateY(-52%); color:var(--arab-blue-600); font-size:24px; line-height:1; pointer-events:none; }
+.officials-search-clear { position:absolute; right:9px; top:50%; transform:translateY(-50%); width:30px; height:30px; border:0; border-radius:50%; background:#eef2f6; color:#667085; cursor:pointer; font-size:20px; line-height:1; }
+.officials-search-clear:hover { background:#e3e9f1; color:#344054; }
+
+.officials-list-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 24px 18px; border-bottom:1px solid var(--arab-border); }
+.officials-section-title { margin:0; color:var(--arab-blue-950); font-size:21px; font-weight:800; }
+.officials-section-subtitle { margin:4px 0 0; color:var(--arab-muted); font-size:14px; }
+.officials-count-badge { background:#eaf3ff; color:var(--arab-blue-700); border-radius:999px; padding:7px 12px; font-size:13px; font-weight:750; white-space:nowrap; }
+
+.officials-table-wrap { overflow-x:auto; }
+.arab-table.officials-table { width:100%; min-width:820px; border-collapse:collapse; }
+.officials-table th { background:#f6f9fd; color:#41516a; text-transform:uppercase; letter-spacing:.05em; font-size:12px; font-weight:800; padding:14px 16px; text-align:left; border-bottom:1px solid var(--arab-border); }
+.officials-table td { padding:14px 16px; border-bottom:1px solid #edf1f6; color:#263a55; vertical-align:middle; }
+.officials-table tbody tr:hover { background:#fbfdff; }
+.official-id { color:#667085; font-size:13px; font-weight:750; }
+.official-name-cell { display:flex; align-items:center; gap:11px; min-width:180px; }
+.official-name-cell strong { color:var(--arab-blue-950); font-size:14px; }
+.official-avatar { width:36px; height:36px; flex:0 0 36px; display:grid; place-items:center; border-radius:50%; background:#eaf3ff; color:var(--arab-blue-700); font-size:14px; font-weight:800; }
+.official-role-badge { display:inline-flex; align-items:center; min-height:30px; padding:6px 10px; border-radius:999px; background:#f0f5fb; color:#405673; font-size:12px; font-weight:750; white-space:nowrap; }
+.officials-action-col, .officials-action-cell { text-align:right !important; white-space:nowrap; }
+.officials-action-cell { display:flex; align-items:center; justify-content:flex-end; gap:7px; }
+.officials-action-cell .official-delete-form { display:inline-flex; margin:0; }
+.arab-btn-small { min-height:36px; padding:8px 12px; font-size:13px; }
+
+.officials-empty-state, .officials-no-results { padding:68px 24px; text-align:center; }
+.officials-empty-icon, .officials-no-results-icon { width:58px; height:58px; border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; background:#eaf3ff; color:var(--arab-blue-700); font-size:24px; font-weight:800; }
+.officials-empty-state h3, .officials-no-results h3 { margin:0 0 5px; color:var(--arab-blue-950); font-size:20px; }
+.officials-empty-state p, .officials-no-results p { margin:0 0 18px; color:var(--arab-muted); }
+
+.officials-mobile-list { display:none; padding:16px; }
+.official-mobile-card { border:1px solid var(--arab-border); border-radius:14px; padding:16px; margin-bottom:12px; background:#fff; box-shadow:var(--arab-shadow-sm); }
+.official-mobile-card:last-child { margin-bottom:0; }
+.official-mobile-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.official-mobile-top .official-name-cell { min-width:0; }
+.official-mobile-top .official-name-cell > div { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.official-mobile-id { color:var(--arab-muted); font-size:12px; }
+.official-mobile-details { display:grid; grid-template-columns:1fr; gap:11px; padding:14px 0 0; margin-top:14px; border-top:1px solid var(--arab-border); }
+.official-mobile-details div { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.official-mobile-details span { color:var(--arab-muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+.official-mobile-details strong { color:#263a55; font-size:13px; overflow-wrap:anywhere; }
+.official-mobile-actions { display:flex; gap:8px; margin-top:15px; }
+.official-mobile-actions .arab-btn, .official-mobile-actions .official-delete-form { flex:1; }
+.official-mobile-actions .official-delete-form { display:flex; margin:0; }
+.official-mobile-actions .arab-btn { width:100%; }
+
+@media (max-width:760px) {
+  .arab-officials-page { padding-top:22px; }
+  .arab-page-heading.officials-heading { align-items:stretch; flex-direction:column; gap:14px; }
+  .officials-add-btn { width:100%; justify-content:center; text-align:center; }
+  .officials-search-area { padding:18px; }
+  .officials-search-wrap { max-width:none; }
+  .officials-list-header { padding:18px; }
+  .officials-count-badge { display:none; }
+  .officials-table-wrap { display:none; }
+  .officials-mobile-list { display:block; }
+}
+
+@media (max-width:420px) {
+  .official-mobile-top { flex-direction:column; }
+  .official-mobile-top .official-role-badge { align-self:flex-start; }
+}

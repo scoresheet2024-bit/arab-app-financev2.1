@@ -1,0 +1,913 @@
+const express = require('express');
+const pool = require('../db');
+const renderNavigation = require('../navigation/menu');
+
+const router = express.Router();
+
+router.get('/official-activity', async (req, res) => {
+
+    try {
+
+        // ==================================================
+
+        // GET OFFICIAL ACTIVITY
+
+        // ==================================================
+
+        //
+
+        // Referee =
+
+        // Referee + Umpire 1 + Umpire 2
+
+        //
+
+        // T.O =
+
+        // Scorer + Timer + Shot Clock Operator + Assistant Scorer
+
+        //
+
+        // Commissioner =
+
+        // Commissioner
+
+        //
+
+        // We start from the officials table so that officials
+
+        // with ZERO games are also displayed.
+
+        // ==================================================
+
+        const result = await pool.query(`
+
+            SELECT
+
+                o.officialid,
+
+                o.fullname,
+
+                COUNT(
+
+                    CASE
+
+                        WHEN a.role IN (
+
+                            'Referee',
+
+                            'Umpire 1',
+
+                            'Umpire 2'
+
+                        )
+
+                        THEN 1
+
+                    END
+
+                ) AS referee_games,
+
+                COUNT(
+
+                    CASE
+
+                        WHEN a.role IN (
+
+                            'Scorer',
+
+                            'Timer',
+
+                            'Shot Clock Operator',
+
+                            'Assistant Scorer'
+
+                        )
+
+                        THEN 1
+
+                    END
+
+                ) AS to_games,
+
+                COUNT(
+
+                    CASE
+
+                        WHEN a.role = 'Commissioner'
+
+                        THEN 1
+
+                    END
+
+                ) AS commissioner_games,
+
+                COUNT(a.assignmentid) AS total_games
+
+            FROM public.officials o
+
+            LEFT JOIN public.assignments a
+
+                ON a.officialid = o.officialid
+
+            GROUP BY
+
+                o.officialid,
+
+                o.fullname
+
+            ORDER BY
+
+                total_games DESC,
+
+                o.fullname ASC
+
+        `);
+
+        // ==================================================
+
+        // PAGE
+
+        // ==================================================
+
+        res.send(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+
+        name="viewport"
+
+        content="width=device-width, initial-scale=1.0"
+
+    >
+
+    <title>
+
+        Official Activity | ARAB
+
+    </title>
+
+    <style>
+
+        * {
+
+            box-sizing: border-box;
+
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family:
+
+                Arial,
+
+                Helvetica,
+
+                sans-serif;
+
+            background: #f5f7fb;
+
+            color: #172033;
+
+        }
+
+        /* ==========================================
+
+           MAIN CONTENT
+
+        ========================================== */
+
+        .official-page {
+
+            padding: 35px;
+
+            max-width: 1600px;
+
+            margin: 0 auto;
+
+        }
+
+        /* ==========================================
+
+           PAGE HEADER
+
+        ========================================== */
+
+        .page-header {
+
+            margin-bottom: 30px;
+
+        }
+
+        .page-title {
+
+            font-size: 36px;
+
+            font-weight: 700;
+
+            margin: 0 0 8px 0;
+
+            color: #172033;
+
+        }
+
+        .page-subtitle {
+
+            font-size: 19px;
+
+            color: #667085;
+
+            margin: 0;
+
+        }
+
+        /* ==========================================
+
+           SUMMARY CARD
+
+        ========================================== */
+
+        .summary-card {
+
+            background: white;
+
+            border: 1px solid #e1e5ec;
+
+            border-radius: 16px;
+
+            padding: 24px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+
+                0 2px 6px rgba(0,0,0,0.04);
+
+        }
+
+        .summary-title {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            color: #667085;
+
+            margin-bottom: 8px;
+
+        }
+
+        .summary-number {
+
+            font-size: 34px;
+
+            font-weight: bold;
+
+            color: #172033;
+
+        }
+
+        /* ==========================================
+
+           TABLE CONTAINER
+
+        ========================================== */
+
+        .table-container {
+
+            background: white;
+
+            border: 1px solid #e1e5ec;
+
+            border-radius: 16px;
+
+            overflow-x: auto;
+
+            box-shadow:
+
+                0 2px 6px rgba(0,0,0,0.04);
+
+        }
+
+        /* ==========================================
+
+           TABLE
+
+        ========================================== */
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 750px;
+
+        }
+
+        th {
+
+            background: #f2f4f7;
+
+            color: #344054;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            text-align: left;
+
+            padding: 18px 20px;
+
+            border-bottom:
+
+                1px solid #dfe3e8;
+
+        }
+
+        td {
+
+            padding: 18px 20px;
+
+            border-bottom:
+
+                1px solid #e2e6ee;
+
+            font-size: 16px;
+
+            color: #172033;
+
+        }
+
+        tbody tr:hover {
+
+            background: #f8fafc;
+
+        }
+
+        tbody tr:last-child td {
+
+            border-bottom: none;
+
+        }
+
+        /* ==========================================
+
+           OFFICIAL NAME
+
+        ========================================== */
+
+        .official-name {
+
+            font-weight: bold;
+
+            font-size: 17px;
+
+        }
+
+        /* ==========================================
+
+           NUMBER CELLS
+
+        ========================================== */
+
+        .number {
+
+            font-weight: 600;
+
+            text-align: center;
+
+        }
+
+        .total-number {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            color: #1769e0;
+
+            text-align: center;
+
+        }
+
+        /* ==========================================
+
+           ROLE BADGES
+
+        ========================================== */
+
+        .role-count {
+
+            display: inline-block;
+
+            min-width: 35px;
+
+            padding: 6px 10px;
+
+            text-align: center;
+
+            border-radius: 8px;
+
+            background: #f5f7fb;
+
+            font-weight: bold;
+
+        }
+
+        /* ==========================================
+
+           EMPTY STATE
+
+        ========================================== */
+
+        .empty {
+
+            padding: 45px;
+
+            text-align: center;
+
+            color: #667085;
+
+            font-size: 17px;
+
+        }
+
+        /* ==========================================
+
+           BACK BUTTON
+
+        ========================================== */
+
+        .back-container {
+
+            margin-top: 25px;
+
+        }
+
+        .back-button {
+
+            display: inline-block;
+
+            padding: 11px 18px;
+
+            background: #1769e0;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 7px;
+
+            font-weight: bold;
+
+        }
+
+        .back-button:hover {
+
+            background: #0d56c7;
+
+        }
+
+        /* ==========================================
+
+           RESPONSIVE
+
+        ========================================== */
+
+        @media (max-width: 700px) {
+
+            .official-page {
+
+                padding: 18px;
+
+            }
+
+            .page-title {
+
+                font-size: 28px;
+
+            }
+
+            .page-subtitle {
+
+                font-size: 16px;
+
+            }
+
+            th,
+
+            td {
+
+                padding: 13px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    ${renderNavigation()}
+
+    <main class="official-page">
+
+        <!-- ==========================================
+
+             PAGE HEADER
+
+        ========================================== -->
+
+        <div class="page-header">
+
+            <h1 class="page-title">
+
+                Official Activity
+
+            </h1>
+
+            <p class="page-subtitle">
+
+                Summary of games assigned to each official
+
+            </p>
+
+        </div>
+
+        <!-- ==========================================
+
+             SUMMARY
+
+        ========================================== -->
+
+        <div class="summary-card">
+
+            <div class="summary-title">
+
+                Total Officials
+
+            </div>
+
+            <div class="summary-number">
+
+                ${result.rows.length}
+
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             OFFICIAL ACTIVITY TABLE
+        ========================================== -->
+
+        <div class="table-container">
+
+            ${
+
+                result.rows.length === 0
+
+                ?
+
+                `
+
+                    <div class="empty">
+
+                        No officials found.
+
+                    </div>
+
+                `
+
+                :
+
+                `
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+
+                                Official
+
+                            </th>
+
+                            <th>
+
+                                Referee
+
+                            </th>
+
+                            <th>
+
+                                T.O
+
+                            </th>
+
+                            <th>
+
+                                Commissioner
+
+                            </th>
+
+                            <th>
+
+                                Total Games
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${
+
+                            result.rows.map(
+
+                                official => {
+
+                                    const referee =
+
+                                        Number(
+
+                                            official.referee_games
+
+                                        );
+
+                                    const to =
+
+                                        Number(
+
+                                            official.to_games
+
+                                        );
+
+                                    const commissioner =
+
+                                        Number(
+
+                                            official.commissioner_games
+
+                                        );
+
+                                    const total =
+
+                                        Number(
+
+                                            official.total_games
+
+                                        );
+
+                                    return `
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div
+
+                                                class="official-name"
+
+                                            >
+
+                                                ${
+
+                                                    official.fullname
+
+                                                    || '-'
+
+                                                }
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div
+
+                                                class="number"
+
+                                            >
+
+                                                <span
+
+                                                    class="role-count"
+
+                                                >
+
+                                                    ${referee}
+
+                                                </span>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div
+
+                                                class="number"
+
+                                            >
+
+                                                <span
+
+                                                    class="role-count"
+
+                                                >
+
+                                                    ${to}
+
+                                                </span>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div
+
+                                                class="number"
+
+                                            >
+
+                                                <span
+
+                                                    class="role-count"
+
+                                                >
+
+                                                    ${commissioner}
+
+                                                </span>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div
+
+                                                class="total-number"
+
+                                            >
+
+                                                ${total}
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                    `;
+
+                                }
+
+                            ).join('')
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+                `
+
+            }
+
+        </div>
+
+        <!-- ==========================================
+
+             ROLE EXPLANATION
+
+        ========================================== -->
+
+        <div
+
+            class="summary-card"
+
+            style="margin-top:25px;"
+
+        >
+
+            <div
+
+                class="summary-title"
+
+            >
+
+                Role Classification
+
+            </div>
+
+            <p
+
+                style="
+
+                    margin:8px 0 0 0;
+
+                    color:#667085;
+
+                    line-height:1.7;
+
+                "
+
+            >
+
+                <strong>Referee:</strong>
+
+                Referee + Umpire 1 + Umpire 2
+
+                <br>
+
+                <strong>T.O:</strong>
+
+                Scorer + Timer +
+
+                Short Clock Operator +
+
+                Assistant Scorer
+
+                <br>
+
+                <strong>Commissioner:</strong>
+
+                Commissioner
+
+            </p>
+
+        </div>
+
+        <!-- ==========================================
+             BACK
+        ========================================== -->
+
+        <div class="back-container">
+
+            <a
+
+                href="/statistics"
+
+                class="back-button"
+
+            >
+
+                ← Back to Statistics
+
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
+
+        `);
+
+    } catch (error) {
+
+        console.error(
+
+            'Error loading Official Activity:',
+
+            error
+
+        );
+
+        res.status(500).send(
+
+            'Error loading Official Activity: ' +
+
+            error.message
+
+        );
+
+    }
+
+});
+
+module.exports = router;

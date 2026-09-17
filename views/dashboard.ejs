@@ -1,0 +1,151 @@
+<%- include('partials/header', { title: 'ARAB Dashboard' }) %>
+<%- include('partials/navigation') %>
+
+<%
+    const dashboardUser = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+    const displayName = dashboardUser?.fullname || dashboardUser?.username || 'User';
+    const navRole = String(dashboardUser?.actualRole || dashboardUser?.role || 'user').trim().toLowerCase();
+    const pctReports = assignedGamesCount > 0 ? Math.round((submittedReportsCount / assignedGamesCount) * 100) : 0;
+    const reportTotal = totalGames || 0;
+    const paidPct = paymentOverview.totalPayable > 0 ? Math.round((paymentOverview.totalPaid / paymentOverview.totalPayable) * 100) : 0;
+%>
+
+<main class="arab-page arab-dashboard-page">
+    <section class="arab-dashboard-hero">
+        <div class="arab-hero-content">
+            <div class="arab-eyebrow">ARAB MANAGEMENT SYSTEM</div>
+            <h1>Welcome back, <%= displayName %>!</h1>
+            <p>Manage games, officials, reports and payments in one place.</p>
+            <div class="arab-hero-line"></div>
+            <div class="arab-hero-motto">Fair Play <span>•</span> Better Basketball <span>•</span> A Stronger Rwanda</div>
+        </div>
+    </section>
+
+    <section class="arab-kpi-grid" aria-label="Dashboard summary">
+        <article class="arab-kpi arab-kpi-blue">
+            <div class="arab-kpi-icon">🏀</div>
+            <div class="arab-kpi-content"><span>Total Games</span><strong><%= totalGames %></strong><small>All games in the system</small></div>
+        </article>
+        <article class="arab-kpi arab-kpi-yellow">
+            <div class="arab-kpi-icon">▤</div>
+            <div class="arab-kpi-content"><span>Awaiting Reports</span><strong><%= awaitingReportsCount %></strong><small>Assigned games needing reports</small></div>
+        </article>
+        <article class="arab-kpi arab-kpi-green">
+            <div class="arab-kpi-icon">✓</div>
+            <div class="arab-kpi-content"><span>Completed Reports</span><strong><%= submittedReportsCount %></strong><small><%= pctReports %>% of assigned games</small></div>
+        </article>
+        <article class="arab-kpi arab-kpi-red">
+            <div class="arab-kpi-icon">▤</div>
+            <div class="arab-kpi-content"><span>Outstanding Payments</span><strong><%= Number(paymentOverview.outstanding || 0).toLocaleString() %></strong><small>RWF outstanding</small></div>
+        </article>
+    </section>
+
+    <section class="arab-dashboard-grid arab-dashboard-main-grid">
+        <article class="arab-card arab-dashboard-games-card">
+            <div class="arab-card-header arab-dashboard-section-header">
+                <div><h2>Recent / Upcoming Games</h2><p>Your latest games in the system</p></div>
+                <a class="arab-text-link" href="/games">View All Games →</a>
+            </div>
+            <div class="arab-card-body arab-games-table-wrap">
+                <% if (!dashboardGames || dashboardGames.length === 0) { %>
+                    <div class="arab-empty-state"><div class="arab-empty-icon">✓</div><h3>No games found</h3><p>There are no games to display.</p></div>
+                <% } else { %>
+                    <div class="arab-desktop-table">
+                        <table class="arab-dashboard-table">
+                            <thead><tr><th>Date</th><th>Time</th><th>Competition</th><th>Teams</th><th>Court</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody>
+                            <% dashboardGames.forEach(function(game) { %>
+                                <tr>
+                                    <td><strong><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '-' %></strong></td>
+                                    <td><%= game.gametime || '-' %></td>
+                                    <td><%= game.competition || 'No competition' %></td>
+                                    <td><strong><%= game.teama %></strong> <span class="arab-vs">vs</span> <strong><%= game.teamb %></strong></td>
+                                    <td><%= game.court || '-' %></td>
+                                    <td><span class="arab-status <%= game.statusClass %>"><%= game.statusLabel %></span></td>
+                                    <td><a class="arab-btn arab-btn-secondary arab-btn-sm" href="/games">View</a></td>
+                                </tr>
+                            <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="arab-mobile-card-list">
+                        <% dashboardGames.forEach(function(game) { %>
+                            <div class="arab-game-card">
+                                <div class="arab-game-card-top"><span><%= game.gamedate ? new Date(game.gamedate).toLocaleDateString('en-GB') : '-' %></span><span class="arab-status <%= game.statusClass %>"><%= game.statusLabel %></span></div>
+                                <h3><%= game.teama %> <span>vs</span> <%= game.teamb %></h3>
+                                <p><%= game.competition || 'No competition' %> · <%= game.court || 'No court' %> · <%= game.gametime || '-' %></p>
+                                <a class="arab-btn arab-btn-primary" href="/games">Open Game</a>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </article>
+
+        <article class="arab-card arab-report-status-card">
+            <div class="arab-card-header arab-dashboard-section-header"><div><h2>Reports Status</h2><p>Current reporting progress</p></div></div>
+            <div class="arab-card-body arab-report-status-body">
+                <div class="arab-donut" style="--report-progress:<%= reportTotal > 0 ? Math.round((submittedReportsCount / reportTotal) * 100) : 0 %>%"><div><strong><%= reportTotal %></strong><span>Games</span></div></div>
+                <div class="arab-status-legend">
+                    <div><span class="arab-legend-dot arab-dot-green"></span><span>Completed</span><strong><%= submittedReportsCount %></strong></div>
+                    <div><span class="arab-legend-dot arab-dot-yellow"></span><span>Awaiting Report</span><strong><%= awaitingReportsCount %></strong></div>
+                    <div><span class="arab-legend-dot arab-dot-blue"></span><span>Not Assigned</span><strong><%= pendingGamesCount %></strong></div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="arab-dashboard-grid arab-dashboard-lower-grid">
+        <article class="arab-card">
+            <div class="arab-card-header arab-dashboard-section-header"><div><h2>Upcoming Competitions</h2><p>Competitions currently in the system</p></div><a class="arab-text-link" href="/competitions">View All →</a></div>
+            <div class="arab-card-body arab-table-scroll">
+                <table class="arab-dashboard-table">
+                    <thead><tr><th>Competition</th><th>Season</th><th>Games</th><th>Status</th></tr></thead>
+                    <tbody>
+                    <% if (!competitionSummary || competitionSummary.length === 0) { %>
+                        <tr><td colspan="4" class="arab-empty-cell">No competitions found.</td></tr>
+                    <% } else { competitionSummary.forEach(function(comp) { %>
+                        <tr><td><strong><%= comp.competitionname %></strong></td><td><%= comp.season || '-' %></td><td><%= comp.gamecount %></td><td><span class="arab-status arab-status-success">Active</span></td></tr>
+                    <% }); } %>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="arab-card">
+            <div class="arab-card-header arab-dashboard-section-header"><div><h2>Quick Actions</h2><p>Common tasks</p></div></div>
+            <div class="arab-card-body arab-quick-actions">
+                <% if (canAssignGames) { %><a class="arab-quick-action arab-quick-blue" href="/games/new"><span>＋</span><div><strong>Add New Game</strong><small>Create a new game</small></div></a><% } %>
+                <% if (canAssignGames) { %><a class="arab-quick-action arab-quick-yellow" href="/games"><span>♟</span><div><strong>Assign Officials</strong><small>Manage game assignments</small></div></a><% } %>
+                <a class="arab-quick-action arab-quick-orange" href="/official-activity"><span>▤</span><div><strong>Official Activity</strong><small>View activity records</small></div></a>
+                <% if (navRole === 'admin' || navRole === 'finance') { %><a class="arab-quick-action arab-quick-gray" href="/finance"><span>◫</span><div><strong>Manage Payments</strong><small>View payment information</small></div></a><% } %>
+            </div>
+        </article>
+    </section>
+
+    <% if (navRole === 'admin' || navRole === 'finance') { %>
+    <section class="arab-dashboard-grid arab-dashboard-bottom-grid">
+        <article class="arab-card arab-payment-card">
+            <div class="arab-card-header arab-dashboard-section-header"><div><h2>Payment Overview</h2><p>Current payment position</p></div><a class="arab-text-link" href="/finance">View Finance →</a></div>
+            <div class="arab-card-body">
+                <div class="arab-payment-values"><div><strong>RWF <%= Number(paymentOverview.totalPaid || 0).toLocaleString() %></strong><span>Total Paid</span></div><div><strong class="arab-payment-outstanding">RWF <%= Number(paymentOverview.outstanding || 0).toLocaleString() %></strong><span>Outstanding</span></div></div>
+                <div class="arab-payment-progress"><span style="width:<%= paidPct %>%"></span></div>
+                <div class="arab-payment-meta"><span><strong><%= paidPct %>%</strong> paid</span><span><strong><%= paymentOverview.paidOfficials || 0 %></strong> Officials Paid</span><span class="arab-payment-unpaid"><strong><%= paymentOverview.unpaidOfficials || 0 %></strong> Officials Unpaid</span></div>
+            </div>
+        </article>
+        <article class="arab-card">
+            <div class="arab-card-header arab-dashboard-section-header"><div><h2>System Information</h2><p>ARAB system overview</p></div></div>
+            <div class="arab-card-body">
+                <div class="arab-info-list">
+                    <div><span>Season</span><strong><%= systemSeason || '-' %></strong></div>
+                    <div><span>Total Officials</span><strong><%= officials %></strong></div>
+                    <div><span>Total Competitions</span><strong><%= competitions %></strong></div>
+                    <div><span>Last Updated</span><strong><%= lastUpdated %></strong></div>
+                </div>
+            </div>
+        </article>
+    </section>
+    <% } %>
+</main>
+
+<%- include('partials/footer') %>

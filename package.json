@@ -1,0 +1,21 @@
+{
+  "name": "arab-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "pdfkit": "^0.20.2",
+    "pg": "^8.22.0",
+    "xlsx": "^0.18.5"
+  }
+}

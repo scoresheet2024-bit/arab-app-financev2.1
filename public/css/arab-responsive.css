@@ -1,0 +1,119 @@
+/* =========================================================
+   ARAB MOBILE / RESPONSIVE FOUNDATION
+   ========================================================= */
+
+img { max-width: 100%; }
+
+@media (max-width: 900px) {
+    .dashboard-cards { grid-template-columns: 1fr !important; }
+    .game-summary { grid-template-columns: 1fr !important; }
+    .official-grid { grid-template-columns: 1fr !important; }
+
+    .arab-page table,
+    .page table { min-width: 680px; }
+
+    .arab-page .section,
+    .page .section { overflow-x: auto; }
+}
+
+@media (max-width: 600px) {
+    .arab-page, .page { padding-left: 14px; padding-right: 14px; }
+
+    .arab-page .page-title,
+    .page > h1 { font-size: 25px; }
+
+    .subtitle, .page-subtitle { font-size: 14px; margin-bottom: 20px; }
+
+    .section { border-radius: 13px; padding: 15px; }
+
+    .arab-btn, .button, .view-button {
+        min-height: 44px;
+        padding: 10px 14px;
+    }
+
+    /* Existing horizontal action groups become vertical when necessary. */
+    .arab-mobile-stack,
+    .form-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .arab-mobile-stack > *,
+    .form-actions > * { width: 100%; }
+}
+
+/* Utility for future mobile card conversions. */
+.arab-mobile-card { display: none; }
+
+@media (max-width: 700px) {
+    .arab-desktop-table { display: none !important; }
+    .arab-mobile-card { display: block; }
+}
+
+/* =========================================================
+   ARAB APPROVED DASHBOARD / MOBILE PROFILE
+   ========================================================= */
+@media (max-width: 1100px) {
+    .arab-dashboard-main-grid,
+    .arab-dashboard-lower-grid,
+    .arab-dashboard-bottom-grid { grid-template-columns: 1fr; }
+    .arab-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+    .arab-topbar { min-height:68px; height:auto; }
+    .arab-user-copy { display:block; }
+    .arab-user-name { max-width:105px; font-size:12px; }
+    .arab-user-role { font-size:10px; }
+    .arab-user-trigger { padding:4px 2px; }
+    .arab-user-menu { position:fixed; top:64px; right:12px; width:205px; }
+    .arab-dashboard-page { padding-top:14px; }
+    .arab-dashboard-hero { min-height:190px; padding:25px 22px; background-position:center; }
+    .arab-dashboard-hero h1 { font-size:28px; }
+    .arab-dashboard-hero p { font-size:14px; }
+    .arab-kpi-grid { grid-template-columns:1fr 1fr; gap:10px; }
+    .arab-kpi { min-height:108px; padding:14px; }
+    .arab-kpi-icon { width:44px; height:44px; flex-basis:44px; font-size:19px; }
+    .arab-kpi-content strong { font-size:27px; }
+    .arab-kpi-content span { font-size:12px; }
+    .arab-kpi-content small { font-size:10px; }
+}
+
+@media (max-width: 600px) {
+    .arab-page, main.arab-page { padding:12px 12px 28px; }
+    .arab-dashboard-hero { min-height:185px; padding:22px 18px; border-radius:14px; background-position:65% center; }
+    .arab-eyebrow { font-size:10px; letter-spacing:.14em; }
+    .arab-dashboard-hero h1 { font-size:25px; }
+    .arab-dashboard-hero p { font-size:13px; max-width:280px; }
+    .arab-hero-motto { font-size:11px; }
+    .arab-kpi-grid { grid-template-columns:1fr 1fr; }
+    .arab-kpi { display:block; min-height:118px; }
+    .arab-kpi-icon { margin-bottom:8px; }
+    .arab-kpi-content strong { font-size:25px; }
+    .arab-card-header { padding:15px 15px 10px; }
+    .arab-card-body { padding:0 15px 15px; }
+    .arab-dashboard-section-header { align-items:flex-start; }
+    .arab-dashboard-section-header h2 { font-size:16px; }
+    .arab-dashboard-section-header p { font-size:10px; }
+    .arab-text-link { font-size:11px; }
+    .arab-report-status-body { padding-top:5px; }
+    .arab-donut { width:135px; height:135px; flex-basis:135px; }
+    .arab-donut > div { width:80px; height:80px; }
+    .arab-donut strong { font-size:24px; }
+    .arab-payment-values { gap:10px; }
+    .arab-payment-values > div + div { padding-left:10px; }
+    .arab-payment-values strong { font-size:17px; }
+    .arab-payment-meta { flex-wrap:wrap; }
+    .arab-quick-actions { grid-template-columns:1fr; }
+    .arab-mobile-card-list { display:block; }
+}
+
+@media (max-width: 390px) {
+    .arab-topbar { padding:0 9px; }
+    .arab-topbar-brand { gap:5px; }
+    .arab-topbar-name { font-size:18px; }
+    .arab-user-name { max-width:82px; }
+    .arab-user-avatar { width:34px; height:34px; }
+    .arab-user-chevron { font-size:15px; }
+    .arab-kpi-grid { grid-template-columns:1fr; }
+}

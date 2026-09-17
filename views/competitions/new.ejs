@@ -1,0 +1,32 @@
+<%- include('../partials/header', { title: 'Add New Competition' }) %>
+<%- include('../partials/navigation') %>
+
+<main class="arab-page competition-page">
+    <div class="competition-page-header">
+        <div>
+            <h1 class="page-title">Add New Competition</h1>
+            <p class="page-subtitle">Create a competition and assign its season.</p>
+        </div>
+    </div>
+
+    <section class="arab-card competition-form-card">
+        <form action="/competitions" method="POST" class="competition-form">
+            <div class="competition-form-field">
+                <label for="competitionname">Competition Name</label>
+                <input id="competitionname" type="text" name="competitionname" placeholder="Enter competition name" required>
+            </div>
+
+            <div class="competition-form-field">
+                <label for="season">Season</label>
+                <input id="season" type="text" name="season" placeholder="Example: 2026 or 2026/2027" required>
+            </div>
+
+            <div class="competition-form-actions">
+                <a href="/competitions" class="arab-btn arab-btn-secondary">Cancel</a>
+                <button type="submit" class="arab-btn arab-btn-primary">Save Competition</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<link rel="stylesheet" href="/css/arab-competitions.css">

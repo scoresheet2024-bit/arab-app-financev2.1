@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Assign Game - ARAB Reporting System</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            background: #f7f9fc;
+
+            color: #172033;
+
+        }
+
+
+        .main {
+
+            padding: 35px;
+
+            max-width: 1000px;
+
+        }
+
+
+        .page-title {
+
+            font-size: 36px;
+
+            margin: 0 0 8px 0;
+
+        }
+
+
+        .subtitle {
+
+            color: #667085;
+
+            font-size: 17px;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        /* ==========================================
+           GAME INFORMATION
+        ========================================== */
+
+        .game-info {
+
+            background: white;
+
+            border: 1px solid #e1e5ec;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 2px 6px
+                rgba(0,0,0,0.04);
+
+        }
+
+
+        .game-info h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 20px;
+
+            font-size: 25px;
+
+        }
+
+
+        .game-details {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+
+        }
+
+
+        .detail-item {
+
+            padding: 10px;
+
+            background: #f8fafc;
+
+            border-radius: 7px;
+
+        }
+
+
+        .detail-label {
+
+            font-size: 13px;
+
+            color: #667085;
+
+            margin-bottom: 4px;
+
+        }
+
+
+        .detail-value {
+
+            font-weight: bold;
+
+        }
+
+
+        /* ==========================================
+           ASSIGNMENT FORM
+        ========================================== */
+
+        .assignment-container {
+
+            background: white;
+
+            border: 1px solid #e1e5ec;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 2px 6px
+                rgba(0,0,0,0.04);
+
+        }
+
+
+        .section-title {
+
+            font-size: 23px;
+
+            margin-top: 0;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .official-box {
+
+            position: relative;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .official-box label {
+
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 7px;
+
+            color: #344054;
+
+        }
+
+
+        .official-input {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid #ccd2da;
+
+            border-radius: 7px;
+
+            font-size: 16px;
+
+        }
+
+
+        .official-input:focus {
+
+            outline: none;
+
+            border-color: #1769e0;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(23,105,224,0.10);
+
+        }
+
+
+        /* ==========================================
+           AUTOCOMPLETE
+        ========================================== */
+
+        .suggestions {
+
+            position: absolute;
+
+            left: 0;
+
+            right: 0;
+
+            top: 72px;
+
+            background: white;
+
+            border:
+                1px solid #ccd2da;
+
+            border-radius: 7px;
+
+            z-index: 1000;
+
+            max-height: 250px;
+
+            overflow-y: auto;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0,0,0,0.10);
+
+        }
+
+
+        .suggestion {
+
+            padding: 12px;
+
+            cursor: pointer;
+
+            border-bottom:
+                1px solid #edf0f5;
+
+        }
+
+
+        .suggestion:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .suggestion:hover {
+
+            background: #f2f4f7;
+
+        }
+
+
+        .suggestion small {
+
+            color: #667085;
+
+        }
+
+
+        /* ==========================================
+           BUTTONS
+        ========================================== */
+
+        .button-row {
+
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 30px;
+
+        }
+
+
+        .review-button {
+
+            background: #1769e0;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 22px;
+
+            border-radius: 7px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .review-button:hover {
+
+            background: #0d56c7;
+
+        }
+
+
+        .cancel-button {
+
+            background: #6c757d;
+
+            color: white;
+
+            padding: 12px 22px;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+        }
+
+
+        .cancel-button:hover {
+
+            background: #5c636a;
+
+        }
+
+
+        /* ==========================================
+           REVIEW
+        ========================================== */
+
+        .review-section {
+
+            display: none;
+
+            background: white;
+
+            border: 1px solid #e1e5ec;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            margin-top: 25px;
+
+            box-shadow:
+                0 2px 6px
+                rgba(0,0,0,0.04);
+
+        }
+
+
+        .review-title {
+
+            font-size: 23px;
+
+            margin-top: 0;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .review-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 12px;
+
+            border-bottom:
+                1px solid #edf0f5;
+
+        }
+
+
+        .review-row:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .review-role {
+
+            font-weight: bold;
+
+            color: #344054;
+
+        }
+
+
+        .review-name {
+
+            color: #172033;
+
+        }
+
+
+        .confirm-button {
+
+            background: #198754;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 22px;
+
+            border-radius: 7px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .confirm-button:hover {
+
+            background: #146c43;
+
+        }
+
+
+        .edit-button {
+
+            background: #6c757d;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 22px;
+
+            border-radius: 7px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .review-buttons {
+
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 25px;
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .main {
+
+                padding: 20px;
+
+            }
+
+
+            .page-title {
+
+                font-size: 30px;
+
+            }
+
+
+            .game-details {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .review-row {
+
+                flex-direction: column;
+
+                gap: 5px;
+
+            }
+
+
+            .button-row,
+            .review-buttons {
+
+                flex-direction: column;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         REUSABLE NAVIGATION
+    =========================================== -->
+
+    <%- include('../partials/navigation') %>
+
+
+    <!-- ==========================================
+         MAIN
+    =========================================== -->
+
+    <div class="main">
+
+
+        <h1 class="page-title">
+
+            Assign Game
+
+        </h1>
+
+
+        <div class="subtitle">
+
+            Select officials for this game
+
+        </div>
+
+
+        <!-- ==========================================
+             GAME INFORMATION
+        =========================================== -->
+
+        <div class="game-info">
+
+
+            <h2>
+
+                <%= game.teama %>
+
+                vs
+
+                <%= game.teamb %>
+
+            </h2>
+
+
+            <div class="game-details">
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Competition
+                    </div>
+
+                    <div class="detail-value">
+
+                        <%= game.competition || '-' %>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Season
+                    </div>
+
+                    <div class="detail-value">
+
+                        <%= game.season || '-' %>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Date
+                    </div>
+
+                    <div class="detail-value">
+
+                        <%= game.gamedate
+                            ? new Date(game.gamedate)
+                                .toLocaleDateString('en-GB')
+                            : '-'
+                        %>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Time
+                    </div>
+
+                    <div class="detail-value">
+
+                        <%= game.gametime || '-' %>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Court / Venue
+                    </div>
+
+                    <div class="detail-value">
+
+                        <%= game.court || '-' %>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==========================================
+             ASSIGNMENT FORM
+        =========================================== -->
+
+        <div
+            id="assignmentSection"
+            class="assignment-container"
+        >
+
+
+            <h2 class="section-title">
+
+                Select Officials
+
+            </h2>
+
+
+            <form
+                id="assignmentForm"
+                action="/games/assign/<%= game.gameid %>"
+                method="POST"
+            >
+
+
+                <!-- ==================================
+                     REFEREE
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Referee
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search1"
+                        class="official-input"
+                        placeholder="Start typing referee name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="referee_id"
+                        id="referee_id"
+                    >
+
+
+                    <div
+                        id="suggestions1"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     UMPIRE 1
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Umpire 1
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search2"
+                        class="official-input"
+                        placeholder="Start typing Umpire 1 name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="umpire1_id"
+                        id="umpire1_id"
+                    >
+
+
+                    <div
+                        id="suggestions2"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     UMPIRE 2
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Umpire 2
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search3"
+                        class="official-input"
+                        placeholder="Start typing Umpire 2 name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="umpire2_id"
+                        id="umpire2_id"
+                    >
+
+
+                    <div
+                        id="suggestions3"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     SCORER
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Scorer
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search4"
+                        class="official-input"
+                        placeholder="Start typing scorer name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="scorer_id"
+                        id="scorer_id"
+                    >
+
+
+                    <div
+                        id="suggestions4"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     TIMER
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Timer
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search5"
+                        class="official-input"
+                        placeholder="Start typing timer name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="timer_id"
+                        id="timer_id"
+                    >
+
+
+                    <div
+                        id="suggestions5"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     SHORT CLOCK OPERATOR
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Shot Clock Operator
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search6"
+                        class="official-input"
+                        placeholder="Start typing short clock operator name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="shot_clock_operator_id"
+                        id="shot_clock_operator_id"
+                    >
+
+
+                    <div
+                        id="suggestions6"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     ASSISTANT SCORER
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Ass. Scorer
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search7"
+                        class="official-input"
+                        placeholder="Start typing assistant scorer name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="assistant_scorer_id"
+                        id="assistant_scorer_id"
+                    >
+
+
+                    <div
+                        id="suggestions7"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     COMMISSIONER
+                =================================== -->
+
+                <div class="official-box">
+
+                    <label>
+                        Commissioner
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="search8"
+                        class="official-input"
+                        placeholder="Start typing commissioner name..."
+                        autocomplete="off"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="commissioner_id"
+                        id="commissioner_id"
+                    >
+
+
+                    <div
+                        id="suggestions8"
+                        class="suggestions"
+                    ></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     BUTTONS
+                =================================== -->
+
+                <div class="button-row">
+
+
+                    <button
+                        type="button"
+                        class="review-button"
+                        onclick="reviewAssignment()"
+                    >
+
+                        Review Assignment
+
+                    </button>
+
+
+                    <a
+                        href="/games"
+                        class="cancel-button"
+                    >
+
+                        Cancel
+
+                    </a>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+        <!-- ==========================================
+             REVIEW SECTION
+        =========================================== -->
+
+        <div
+            id="reviewSection"
+            class="review-section"
+        >
+
+
+            <h2 class="review-title">
+
+                Review Assignment
+
+            </h2>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Referee
+                </span>
+
+                <span
+                    id="reviewReferee"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Umpire 1
+                </span>
+
+                <span
+                    id="reviewUmpire1"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Umpire 2
+                </span>
+
+                <span
+                    id="reviewUmpire2"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Scorer
+                </span>
+
+                <span
+                    id="reviewScorer"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Timer
+                </span>
+
+                <span
+                    id="reviewTimer"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Shot Clock Operator
+                </span>
+
+                <span
+                    id="reviewShortClock"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Ass. Scorer
+                </span>
+
+                <span
+                    id="reviewAssistantScorer"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="review-row">
+
+                <span class="review-role">
+                    Commissioner
+                </span>
+
+                <span
+                    id="reviewCommissioner"
+                    class="review-name"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <!-- ======================================
+                 CONFIRMATION FORM
+            ======================================= -->
+
+            <form
+                action="/games/assign/<%= game.gameid %>"
+                method="POST"
+            >
+
+
+                <input
+                    type="hidden"
+                    name="referee_id"
+                    id="save_referee_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="umpire1_id"
+                    id="save_umpire1_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="umpire2_id"
+                    id="save_umpire2_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="scorer_id"
+                    id="save_scorer_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="timer_id"
+                    id="save_timer_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="shot_clock_operator_id"
+                    id="save_shot_clock_operator_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="assistant_scorer_id"
+                    id="save_assistant_scorer_id"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="commissioner_id"
+                    id="save_commissioner_id"
+                >
+
+
+                <div class="review-buttons">
+
+
+                    <button
+                        type="submit"
+                        class="confirm-button"
+                    >
+
+                        Confirm & Save Assignment
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="edit-button"
+                        onclick="editAssignment()"
+                    >
+
+                        ← Edit Assignment
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
+
+    <script>
+
+
+        // ==================================================
+        // AUTOCOMPLETE
+        // ==================================================
+
+        function setupAutocomplete(
+            searchId,
+            hiddenId,
+            suggestionsId
+        ) {
+
+
+            const searchBox =
+                document.getElementById(searchId);
+
+
+            const hidden =
+                document.getElementById(hiddenId);
+
+
+            const suggestions =
+                document.getElementById(suggestionsId);
+
+
+            searchBox.addEventListener(
+                'input',
+                async function() {
+
+
+                    const search =
+                        this.value.trim();
+
+
+                    // Clear selected ID
+                    hidden.value = '';
+
+
+                    // Clear old suggestions
+                    suggestions.innerHTML = '';
+
+
+                    if (search.length < 1) {
+
+                        return;
+
+                    }
+
+
+                    try {
+
+
+                        const response =
+                            await fetch(
+                                '/api/officials/search?q=' +
+                                encodeURIComponent(search)
+                            );
+
+
+                        if (!response.ok) {
+
+                            return;
+
+                        }
+
+
+                        const officials =
+                            await response.json();
+
+
+                        officials.forEach(
+                            official => {
+
+
+                                const div =
+                                    document.createElement(
+                                        'div'
+                                    );
+
+
+                                div.className =
+                                    'suggestion';
+
+
+                                div.innerHTML =
+
+                                    '<strong>' +
+
+                                    escapeHtml(
+                                        official.fullname ||
+                                        ''
+                                    ) +
+
+                                    '</strong>' +
+
+                                    '<br>' +
+
+                                    '<small>' +
+
+                                    escapeHtml(
+                                        official.role ||
+                                        ''
+                                    ) +
+
+                                    (
+                                        official.phone
+
+                                        ?
+
+                                        ' - ' +
+                                        escapeHtml(
+                                            official.phone
+                                        )
+
+                                        :
+
+                                        ''
+                                    ) +
+
+                                    '</small>';
+
+
+                                div.addEventListener(
+                                    'click',
+                                    function() {
+
+
+                                        searchBox.value =
+                                            official.fullname;
+
+
+                                        hidden.value =
+                                            official.officialid;
+
+
+                                        suggestions.innerHTML =
+                                            '';
+
+                                    }
+                                );
+
+
+                                suggestions.appendChild(
+                                    div
+                                );
+
+
+                            }
+                        );
+
+
+                    } catch (error) {
+
+
+                        console.error(
+                            'Error searching officials:',
+                            error
+                        );
+
+
+                    }
+
+                }
+            );
+
+
+            // Clear suggestions when clicking outside
+
+            document.addEventListener(
+                'click',
+                function(event) {
+
+
+                    if (
+
+                        !searchBox.contains(
+                            event.target
+                        )
+
+                        &&
+
+                        !suggestions.contains(
+                            event.target
+                        )
+
+                    ) {
+
+                        suggestions.innerHTML =
+                            '';
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // ==================================================
+        // ESCAPE HTML
+        // ==================================================
+
+        function escapeHtml(value) {
+
+            return String(value ?? '')
+
+                .replace(
+                    /&/g,
+                    '&amp;'
+                )
+
+                .replace(
+                    /</g,
+                    '&lt;'
+                )
+
+                .replace(
+                    />/g,
+                    '&gt;'
+                )
+
+                .replace(
+                    /"/g,
+                    '&quot;'
+                )
+
+                .replace(
+                    /'/g,
+                    '&#039;'
+                );
+
+        }
+
+
+        // ==================================================
+        // SETUP ALL 8 POSITIONS
+        // ==================================================
+
+        setupAutocomplete(
+            'search1',
+            'referee_id',
+            'suggestions1'
+        );
+
+
+        setupAutocomplete(
+            'search2',
+            'umpire1_id',
+            'suggestions2'
+        );
+
+
+        setupAutocomplete(
+            'search3',
+            'umpire2_id',
+            'suggestions3'
+        );
+
+
+        setupAutocomplete(
+            'search4',
+            'scorer_id',
+            'suggestions4'
+        );
+
+
+        setupAutocomplete(
+            'search5',
+            'timer_id',
+            'suggestions5'
+        );
+
+
+        setupAutocomplete(
+            'search6',
+            'shot_clock_operator_id',
+            'suggestions6'
+        );
+
+
+        setupAutocomplete(
+            'search7',
+            'assistant_scorer_id',
+            'suggestions7'
+        );
+
+
+        setupAutocomplete(
+            'search8',
+            'commissioner_id',
+            'suggestions8'
+        );
+
+
+        // ==================================================
+        // REVIEW ASSIGNMENT
+        // ==================================================
+
+        function reviewAssignment() {
+
+
+            const referee =
+                document
+                    .getElementById('search1')
+                    .value
+                    .trim();
+
+
+            const umpire1 =
+                document
+                    .getElementById('search2')
+                    .value
+                    .trim();
+
+
+            const umpire2 =
+                document
+                    .getElementById('search3')
+                    .value
+                    .trim();
+
+
+            const scorer =
+                document
+                    .getElementById('search4')
+                    .value
+                    .trim();
+
+
+            const timer =
+                document
+                    .getElementById('search5')
+                    .value
+                    .trim();
+
+
+            const shortClock =
+                document
+                    .getElementById('search6')
+                    .value
+                    .trim();
+
+
+            const assistantScorer =
+                document
+                    .getElementById('search7')
+                    .value
+                    .trim();
+
+
+            const commissioner =
+                document
+                    .getElementById('search8')
+                    .value
+                    .trim();
+
+
+            // ==========================================
+            // DISPLAY REVIEW NAMES
+            // ==========================================
+
+            document.getElementById(
+                'reviewReferee'
+            ).textContent =
+                referee || '-';
+
+
+            document.getElementById(
+                'reviewUmpire1'
+            ).textContent =
+                umpire1 || '-';
+
+
+            document.getElementById(
+                'reviewUmpire2'
+            ).textContent =
+                umpire2 || '-';
+
+
+            document.getElementById(
+                'reviewScorer'
+            ).textContent =
+                scorer || '-';
+
+
+            document.getElementById(
+                'reviewTimer'
+            ).textContent =
+                timer || '-';
+
+
+            document.getElementById(
+                'reviewShortClock'
+            ).textContent =
+                shortClock || '-';
+
+
+            document.getElementById(
+                'reviewAssistantScorer'
+            ).textContent =
+                assistantScorer || '-';
+
+
+            document.getElementById(
+                'reviewCommissioner'
+            ).textContent =
+                commissioner || '-';
+
+
+            // ==========================================
+            // COPY IDs TO CONFIRMATION FORM
+            // ==========================================
+
+            document.getElementById(
+                'save_referee_id'
+            ).value =
+                document.getElementById(
+                    'referee_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_umpire1_id'
+            ).value =
+                document.getElementById(
+                    'umpire1_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_umpire2_id'
+            ).value =
+                document.getElementById(
+                    'umpire2_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_scorer_id'
+            ).value =
+                document.getElementById(
+                    'scorer_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_timer_id'
+            ).value =
+                document.getElementById(
+                    'timer_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_shot_clock_operator_id'
+            ).value =
+                document.getElementById(
+                    'shot_clock_operator_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_assistant_scorer_id'
+            ).value =
+                document.getElementById(
+                    'assistant_scorer_id'
+                ).value;
+
+
+            document.getElementById(
+                'save_commissioner_id'
+            ).value =
+                document.getElementById(
+                    'commissioner_id'
+                ).value;
+
+
+            // ==========================================
+            // SHOW REVIEW
+            // ==========================================
+
+            document.getElementById(
+                'assignmentSection'
+            ).style.display =
+                'none';
+
+
+            document.getElementById(
+                'reviewSection'
+            ).style.display =
+                'block';
+
+
+            document.getElementById(
+                'reviewSection'
+            ).scrollIntoView({
+                behavior: 'smooth'
+            });
+
+        }
+
+
+        // ==================================================
+        // EDIT ASSIGNMENT
+        // ==================================================
+
+        function editAssignment() {
+
+
+            document.getElementById(
+                'reviewSection'
+            ).style.display =
+                'none';
+
+
+            document.getElementById(
+                'assignmentSection'
+            ).style.display =
+                'block';
+
+
+            document.getElementById(
+                'assignmentSection'
+            ).scrollIntoView({
+                behavior: 'smooth'
+            });
+
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,166 @@
+<%- include('partials/header', { title: 'Upload Game Document' }) %>
+<%- include('partials/navigation') %>
+
+<div class="arab-page">
+
+    <a
+        class="back-button"
+        href="/games/report/<%= game.gameid %>"
+    >
+        ← Back to Game Report
+    </a>
+
+    <h1 class="page-title">
+        Upload Game Document
+    </h1>
+
+    <div class="subtitle">
+        Upload a scoresheet or other document related to this game.
+    </div>
+
+
+    <!-- GAME -->
+
+    <div class="section">
+
+        <h2 style="margin-top:0;">
+            <%= game.teama %> vs <%= game.teamb %>
+        </h2>
+
+        <div class="game-summary">
+
+            <div class="summary-item">
+                <div class="summary-label">Competition</div>
+                <div class="summary-value">
+                    <%= game.competition || '-' %>
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-label">Season</div>
+                <div class="summary-value">
+                    <%= game.season || '-' %>
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-label">Date</div>
+                <div class="summary-value">
+                    <%= game.gamedate
+                        ? new Date(game.gamedate).toLocaleDateString('en-GB')
+                        : '-'
+                    %>
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-label">Time</div>
+                <div class="summary-value">
+                    <%= game.gametime || '-' %>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- UPLOAD -->
+
+    <div class="section">
+
+        <div class="section-title">
+            Select Document
+        </div>
+
+        <form
+            action="/games/<%= game.gameid %>/documents"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="upload-box">
+
+                <div style="margin-bottom:20px;">
+
+                    <label for="documenttype">
+                        Document Type
+                    </label>
+
+                    <select
+                        id="documenttype"
+                        name="documenttype"
+                        required
+                    >
+
+                        <option value="">
+                            -- Select document type --
+                        </option>
+
+                        <option value="Scoresheet">
+                            Scoresheet
+                        </option>
+
+                        <option value="Game Report">
+                            Game Report
+                        </option>
+
+                        <option value="Official Report">
+                            Official Report
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div style="margin-bottom:10px;">
+
+                    <label for="document">
+                        Select File
+                    </label>
+
+                    <input
+                        id="document"
+                        type="file"
+                        name="document"
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                        required
+                    >
+
+                </div>
+
+                <p style="color:#667085; margin-bottom:25px;">
+                    Accepted formats: PDF, Word, Excel, JPG and PNG.
+                    Maximum file size: 10 MB.
+                </p>
+
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    Upload Document
+                </button>
+
+                <a
+                    href="/games/report/<%= game.gameid %>"
+                    class="back-button"
+                    style="margin-left:8px;"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<%- include('partials/footer') %>

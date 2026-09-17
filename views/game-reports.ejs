@@ -1,0 +1,106 @@
+<%- include('partials/header', { title: 'Game Detail Reports' }) %>
+<%- include('partials/navigation') %>
+
+<div class="arab-page">
+
+    <a class="back-button" href="/">
+        ← Back to Dashboard
+    </a>
+
+    <h1 class="page-title">
+        Game Detail Reports
+    </h1>
+
+    <div class="subtitle">
+        View game information, assignments and submitted documents.
+    </div>
+
+    <div class="section">
+
+        <div style="overflow-x:auto;">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Match</th>
+                        <th>Competition</th>
+                        <th>Season</th>
+                        <th>Venue</th>
+                        <th>Submitted By</th>
+                        <th>Report</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <% if (!games || games.length === 0) { %>
+
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding:30px;">
+                                No games found.
+                            </td>
+                        </tr>
+
+                    <% } else { %>
+
+                        <% games.forEach(game => { %>
+
+                            <tr>
+
+                                <td>
+                                    <%= game.gamedate
+                                        ? new Date(game.gamedate).toLocaleDateString('en-GB')
+                                        : '-'
+                                    %>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        <%= game.teama %> vs <%= game.teamb %>
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <%= game.competition || '-' %>
+                                </td>
+
+                                <td>
+                                    <%= game.season || '-' %>
+                                </td>
+
+                                <td>
+                                    <%= game.court || '-' %>
+                                </td>
+
+                                <td>
+                                    <%= game.report_submitted_by || '-' %>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="/games/report/<%= game.gameid %>"
+                                        class="view-button"
+                                    >
+                                        View Report
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include('partials/footer') %>

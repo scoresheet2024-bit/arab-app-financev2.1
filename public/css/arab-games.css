@@ -1,0 +1,77 @@
+/* ARAB Games page - uses the approved ARAB design system */
+.arab-games-page { max-width: 1600px; }
+.arab-page-heading.games-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px; }
+.arab-eyebrow { color:var(--arab-yellow-dark); font-size:12px; font-weight:800; letter-spacing:.16em; margin-bottom:6px; }
+.games-heading .page-title { margin-bottom:4px; }
+.games-create-btn { white-space:nowrap; }
+
+.games-summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-bottom:22px; }
+.games-summary-card { display:flex; align-items:center; gap:16px; padding:20px 22px; min-height:112px; }
+.games-summary-icon { width:52px; height:52px; flex:0 0 52px; border-radius:50%; display:grid; place-items:center; font-size:24px; font-weight:800; }
+.games-icon-blue { background:#e8f2ff; color:var(--arab-blue-700); }
+.games-icon-yellow { background:var(--arab-amber-soft); color:var(--arab-amber); }
+.games-icon-green { background:var(--arab-green-soft); color:var(--arab-green); }
+.games-summary-card div:last-child { display:flex; flex-direction:column; min-width:0; }
+.games-summary-label { color:var(--arab-muted); font-size:14px; font-weight:650; }
+.games-summary-card strong { color:var(--arab-ink); font-size:28px; line-height:1.15; margin:3px 0; }
+.games-summary-card small { color:var(--arab-muted); font-size:13px; }
+.games-summary-date { font-size:24px !important; }
+
+.games-list-card { overflow:hidden; }
+.games-list-header { padding:22px 24px 18px; border-bottom:1px solid var(--arab-border); }
+.games-section-title { margin:0; color:var(--arab-blue-950); font-size:21px; font-weight:800; display:flex; align-items:center; gap:10px; }
+.games-section-title span { color:var(--arab-blue-600); }
+.games-section-subtitle { margin:4px 0 0; color:var(--arab-muted); font-size:14px; }
+.games-count-badge { background:#eaf3ff; color:var(--arab-blue-700); border-radius:999px; padding:7px 12px; font-size:13px; font-weight:750; white-space:nowrap; }
+
+.games-table-wrap { overflow-x:auto; }
+.arab-table.games-table { width:100%; border-collapse:collapse; min-width:900px; }
+.games-table th { background:#f6f9fd; color:#41516a; text-transform:uppercase; letter-spacing:.05em; font-size:12px; font-weight:800; padding:14px 16px; text-align:left; border-bottom:1px solid var(--arab-border); }
+.games-table td { padding:15px 16px; border-bottom:1px solid #edf1f6; color:#263a55; vertical-align:middle; }
+.games-table tbody tr:hover { background:#fbfdff; }
+.game-match-cell, .game-competition-cell { display:flex; flex-direction:column; gap:2px; }
+.game-match-cell strong { color:var(--arab-blue-950); font-size:14px; }
+.game-match-cell span { color:var(--arab-muted); font-size:11px; text-transform:uppercase; }
+.game-match-cell small, .game-competition-cell small { color:var(--arab-muted); font-size:12px; }
+.game-competition-cell strong { color:#263a55; font-size:14px; }
+.games-action-col, .games-action-cell { text-align:right !important; }
+.games-view-only { color:#98a2b3; font-size:13px; }
+
+.arab-status { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:750; white-space:nowrap; }
+.arab-status-awaiting { background:var(--arab-amber-soft); color:#a96800; }
+.arab-btn-small { padding:9px 13px; font-size:13px; }
+
+.games-empty-state { padding:70px 24px; text-align:center; }
+.games-empty-icon { width:58px; height:58px; border-radius:50%; background:var(--arab-green-soft); color:var(--arab-green); display:grid; place-items:center; margin:0 auto 14px; font-size:25px; font-weight:800; }
+.games-empty-state h3 { margin:0 0 5px; color:var(--arab-blue-950); font-size:20px; }
+.games-empty-state p { margin:0 0 18px; color:var(--arab-muted); }
+
+.games-mobile-list { display:none; padding:16px; }
+.games-mobile-card { border:1px solid var(--arab-border); border-radius:14px; padding:16px; margin-bottom:12px; background:#fff; box-shadow:var(--arab-shadow-sm); }
+.games-mobile-card:last-child { margin-bottom:0; }
+.games-mobile-card-top { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
+.games-game-id { color:var(--arab-muted); font-size:12px; font-weight:700; }
+.games-mobile-match { display:flex; align-items:center; justify-content:center; gap:10px; color:var(--arab-blue-950); font-size:17px; text-align:center; margin-bottom:16px; }
+.games-mobile-match span { color:var(--arab-muted); font-size:11px; font-weight:800; }
+.games-mobile-details { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:14px; border-top:1px solid var(--arab-border); }
+.games-mobile-details div { display:flex; flex-direction:column; gap:2px; }
+.games-mobile-details span { color:var(--arab-muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+.games-mobile-details strong { color:#263a55; font-size:13px; }
+.games-mobile-action { width:100%; margin-top:16px; text-align:center; }
+
+@media (max-width:1000px) {
+  .games-summary-grid { grid-template-columns:1fr 1fr; }
+  .games-summary-card:last-child { grid-column:1/-1; }
+}
+@media (max-width:760px) {
+  .arab-games-page { padding-top:22px; }
+  .arab-page-heading.games-heading { align-items:stretch; flex-direction:column; gap:14px; }
+  .games-create-btn { width:100%; justify-content:center; text-align:center; }
+  .games-summary-grid { grid-template-columns:1fr; gap:12px; }
+  .games-summary-card:last-child { grid-column:auto; }
+  .games-summary-card { min-height:96px; }
+  .games-table-wrap { display:none; }
+  .games-mobile-list { display:block; }
+  .games-list-header { padding:18px; }
+  .games-list-header .games-count-badge { display:none; }
+}

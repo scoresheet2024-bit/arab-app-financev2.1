@@ -1,0 +1,45 @@
+<%- include('../partials/header', { title: 'Add User' }) %>
+<%- include('../partials/navigation') %>
+
+<div class="page">
+    <h1>Add User</h1>
+    <p class="subtitle">Create a login account for an ARAB system user.</p>
+
+    <div class="section" style="max-width:700px;">
+        <% if (error) { %>
+            <div style="background:#fef2f2;color:#b42318;border:1px solid #fecdca;border-radius:8px;padding:12px;margin-bottom:18px;"><%= error %></div>
+        <% } %>
+
+        <form action="/users" method="POST">
+            <label>Username</label>
+            <input type="text" name="username" value="<%= form.username %>" required style="width:100%;padding:12px;margin-top:6px;">
+
+            <label>Full Name</label>
+            <input type="text" name="fullname" value="<%= form.fullname %>" required style="width:100%;padding:12px;margin-top:6px;">
+
+            <label>Role</label>
+            <select name="role" required style="width:100%;padding:12px;margin-top:6px;">
+                <% ['admin','to','official','finance'].forEach(role => { %>
+                    <option value="<%= role %>" <%= form.role === role ? 'selected' : '' %>><%= role %></option>
+                <% }) %>
+            </select>
+
+            <label>Link to Official (optional)</label>
+            <select name="officialid" style="width:100%;padding:12px;margin-top:6px;">
+                <option value="">-- Not linked --</option>
+                <% officials.forEach(official => { %>
+                    <option value="<%= official.officialid %>" <%= String(form.officialid) === String(official.officialid) ? 'selected' : '' %>><%= official.fullname %></option>
+                <% }) %>
+            </select>
+
+            <label>Password</label>
+            <input type="password" name="password" minlength="8" required autocomplete="new-password" style="width:100%;padding:12px;margin-top:6px;">
+            <p style="color:#667085;font-size:13px;">Minimum 8 characters.</p>
+
+            <button type="submit" class="button button-primary">Create User</button>
+            <a href="/users" class="button button-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

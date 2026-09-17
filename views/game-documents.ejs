@@ -1,0 +1,160 @@
+<%- include('partials/header', { title: 'Game Documents' }) %>
+<%- include('partials/navigation') %>
+
+<div class="arab-page">
+
+    <a
+        class="back-button"
+        href="/games/report/<%= game.gameid %>"
+    >
+        ← Back to Game Report
+    </a>
+
+    <h1 class="page-title">
+        Game Documents
+    </h1>
+
+    <div class="subtitle">
+        Documents and scoresheets submitted for this game.
+    </div>
+
+
+    <!-- GAME SUMMARY -->
+
+    <div class="section">
+
+        <h2 style="margin-top:0;">
+            <%= game.teama %> vs <%= game.teamb %>
+        </h2>
+
+        <div class="game-summary">
+
+            <div class="summary-item">
+                <div class="summary-label">Competition</div>
+                <div class="summary-value">
+                    <%= game.competition || '-' %>
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-label">Season</div>
+                <div class="summary-value">
+                    <%= game.season || '-' %>
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-label">Date</div>
+                <div class="summary-value">
+                    <%= game.gamedate
+                        ? new Date(game.gamedate).toLocaleDateString('en-GB')
+                        : '-'
+                    %>
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-label">Time</div>
+                <div class="summary-value">
+                    <%= game.gametime || '-' %>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DOCUMENTS -->
+
+    <div class="section">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:20px; flex-wrap:wrap;">
+
+            <div class="section-title" style="margin:0;">
+                Uploaded Documents
+            </div>
+
+            <a
+                href="/games/<%= game.gameid %>/documents/upload"
+                class="button button-primary"
+            >
+                + Upload Document
+            </a>
+
+        </div>
+
+
+        <% if (!documents || documents.length === 0) { %>
+
+            <div class="document-empty">
+                No documents have been uploaded for this game.
+            </div>
+
+        <% } else { %>
+
+            <div style="overflow-x:auto;">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Document Type</th>
+                            <th>File Name</th>
+                            <th>Uploaded</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <% documents.forEach(document => { %>
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        <%= document.documenttype || '-' %>
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <%= document.filename %>
+                                </td>
+
+                                <td>
+                                    <%= document.uploaded_at
+                                        ? new Date(document.uploaded_at).toLocaleString('en-GB')
+                                        : '-'
+                                    %>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="/uploads/<%= document.filepath %>"
+                                        target="_blank"
+                                        class="view-button"
+                                    >
+                                        View File
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+<%- include('partials/footer') %>

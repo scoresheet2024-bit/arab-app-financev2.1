@@ -1,0 +1,46 @@
+<%- include('../partials/header', { title: 'Competitions' }) %>
+<%- include('../partials/navigation') %>
+
+<main class="arab-page competition-page">
+    <div class="competition-page-header">
+        <div>
+            <h1 class="page-title">Competitions</h1>
+            <p class="page-subtitle">Manage competitions and seasons.</p>
+        </div>
+        <a href="/competitions/new" class="arab-btn arab-btn-primary competition-add-btn">+ Add Competition</a>
+    </div>
+
+    <section class="arab-card competition-table-card">
+        <div class="competition-table-wrap">
+            <% if (competitions.length === 0) { %>
+                <div class="competition-empty">
+                    <div class="competition-empty-icon">♜</div>
+                    <h2>No competitions yet</h2>
+                    <p>Create your first competition to get started.</p>
+                    <a href="/competitions/new" class="arab-btn arab-btn-primary">+ Add Competition</a>
+                </div>
+            <% } else { %>
+                <table class="competition-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Competition Name</th>
+                            <th>Season</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% competitions.forEach(competition => { %>
+                            <tr>
+                                <td class="competition-id"><%= competition.competitionid %></td>
+                                <td class="competition-name"><%= competition.competitionname %></td>
+                                <td><%= competition.season || '-' %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    </section>
+</main>
+
+<link rel="stylesheet" href="/css/arab-competitions.css">

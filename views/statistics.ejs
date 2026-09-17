@@ -1,0 +1,181 @@
+<%- include('partials/navigation') %>
+<link rel="stylesheet" href="/css/arab-statistics.css">
+
+<%
+    const safeGames = Array.isArray(games) ? games : [];
+    const safeCompetitions = Array.isArray(competitions) ? competitions : [];
+%>
+
+<main class="arab-page arab-statistics-page">
+    <section class="arab-page-heading">
+        <div>
+            <div class="arab-eyebrow">ARAB REPORTING SYSTEM</div>
+            <h1 class="page-title">Statistics &amp; Reports</h1>
+            <p class="arab-page-subtitle">Overview of games, roles and competitions</p>
+        </div>
+    </section>
+
+    <section class="stats-summary-grid" aria-label="Statistics summary">
+        <div class="arab-card stats-summary-card"><span class="stats-label">Total Games</span><strong><%= totalGames %></strong></div>
+        <div class="arab-card stats-summary-card"><span class="stats-label">Assigned Games</span><strong><%= assignedGames %></strong></div>
+        <div class="arab-card stats-summary-card"><span class="stats-label">Pending Games</span><strong><%= pendingGames %></strong></div>
+    </section>
+
+    <section class="arab-card stats-section">
+        <div class="stats-section-header">
+            <div>
+                <h2>Games by Competition</h2>
+                <p>Click a competition to view its games.</p>
+            </div>
+        </div>
+
+        <div class="stats-table-wrap">
+            <table class="stats-table" id="competitionTable">
+                <thead>
+                    <tr>
+                        <th>Competition</th>
+                        <th>Season</th>
+                        <th>Total Games</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if (!safeCompetitions.length) { %>
+                    <tr><td colspan="3" class="stats-empty">No assigned games found.</td></tr>
+                <% } else { %>
+                    <% safeCompetitions.forEach((competition, index) => { %>
+                        <tr class="competition-row" tabindex="0"
+                            data-competition-id="<%= competition.competitionid == null ? 'none' : competition.competitionid %>"
+                            data-competition-name="<%= competition.competition %>">
+                            <td><span class="competition-link"><%= competition.competition %></span></td>
+                            <td><%= competition.season %></td>
+                            <td><strong><%= competition.total_games %></strong></td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="arab-card competition-games-panel" id="competitionGamesPanel" hidden>
+        <div class="stats-section-header competition-games-header">
+            <div>
+                <div class="arab-eyebrow">SELECTED COMPETITION</div>
+                <h2 id="selectedCompetitionTitle">Competition Games</h2>
+                <p id="selectedCompetitionMeta"></p>
+            </div>
+            <button type="button" class="arab-btn arab-btn-secondary" id="closeCompetitionGames">Close</button>
+        </div>
+
+        <div class="stats-table-wrap">
+            <table class="stats-table competition-games-table">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Competition</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Court</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="competitionGamesBody"></tbody>
+            </table>
+        </div>
+
+        <div class="stats-mobile-games" id="competitionGamesMobile"></div>
+    </section>
+
+    <section class="arab-card stats-section">
+        <div class="stats-section-header"><div><h2>Total Games by Role</h2></div></div>
+        <div class="role-grid">
+            <div class="role-card"><span>Referee</span><strong><%= refereeTotal %></strong><small>Referee + Umpire 1 + Umpire 2</small></div>
+            <div class="role-card"><span>T.O</span><strong><%= toTotal %></strong><small>Scorer + Timer + Short Clock + Ass. Scorer</small></div>
+            <div class="role-card"><span>Commissioner</span><strong><%= commissionerTotal %></strong><small>Commissioner</small></div>
+        </div>
+    </section>
+
+
+</main>
+
+<script>
+(function () {
+    const games = <%- JSON.stringify(safeGames) %>;
+    const rows = Array.from(document.querySelectorAll('.competition-row'));
+    const panel = document.getElementById('competitionGamesPanel');
+    const title = document.getElementById('selectedCompetitionTitle');
+    const meta = document.getElementById('selectedCompetitionMeta');
+    const body = document.getElementById('competitionGamesBody');
+    const mobile = document.getElementById('competitionGamesMobile');
+    const closeBtn = document.getElementById('closeCompetitionGames');
+
+    const esc = value => String(value ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+    const formatDate = value => {
+        if (!value) return '—';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return esc(value);
+        return date.toLocaleDateString('en-GB');
+    };
+
+    const formatTime = value => {
+        if (!value) return '—';
+        return String(value).slice(0, 5);
+    };
+
+    const paid = value => ['paid', 'true', '1', 'yes'].includes(String(value || '').trim().toLowerCase());
+
+    function showCompetition(row) {
+        const id = row.dataset.competitionId;
+        const name = row.dataset.competitionName || 'Competition';
+        rows.forEach(item => item.classList.remove('is-active'));
+        row.classList.add('is-active');
+
+        const selectedGames = games.filter(game => {
+            const gameId = game.competitionid == null ? 'none' : String(game.competitionid);
+            return gameId === id;
+        });
+
+        title.textContent = name;
+        meta.textContent = selectedGames.length + (selectedGames.length === 1 ? ' game' : ' games');
+
+        body.innerHTML = selectedGames.length ? selectedGames.map(game => `
+            <tr>
+                <td><strong>${esc((game.teama || 'Team A') + ' vs ' + (game.teamb || 'Team B'))}</strong></td>
+                <td>${esc(game.competition || name)}</td>
+                <td>${formatDate(game.gamedate)}</td>
+                <td>${esc(formatTime(game.gametime))}</td>
+                <td>${esc(game.court || '—')}</td>
+                <td><span class="payment-badge ${paid(game.payment_status) ? 'is-paid' : 'is-unpaid'}">${paid(game.payment_status) ? 'Paid' : 'Unpaid'}</span></td>
+            </tr>
+        `).join('') : '<tr><td colspan="6" class="stats-empty">No games found for this competition.</td></tr>';
+
+        mobile.innerHTML = selectedGames.length ? selectedGames.map(game => `
+            <article class="mobile-game-card">
+                <div class="mobile-game-top"><strong>${esc((game.teama || 'Team A') + ' vs ' + (game.teamb || 'Team B'))}</strong><span class="payment-badge ${paid(game.payment_status) ? 'is-paid' : 'is-unpaid'}">${paid(game.payment_status) ? 'Paid' : 'Unpaid'}</span></div>
+                <div class="mobile-game-meta"><span>${esc(game.competition || name)}</span><span>${formatDate(game.gamedate)}</span><span>${esc(formatTime(game.gametime))}</span><span>${esc(game.court || '—')}</span></div>
+            </article>
+        `).join('') : '<div class="stats-empty">No games found for this competition.</div>';
+
+        panel.hidden = false;
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    rows.forEach(row => {
+        row.addEventListener('click', () => showCompetition(row));
+        row.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showCompetition(row);
+            }
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        panel.hidden = true;
+        rows.forEach(row => row.classList.remove('is-active'));
+    });
+})();
+</script>

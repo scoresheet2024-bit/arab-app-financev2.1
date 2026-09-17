@@ -1,0 +1,199 @@
+<%- include('../partials/header', {
+    title: 'Edit Official'
+}) %>
+
+
+<%- include('../partials/navigation') %>
+
+
+<div class="arab-page">
+
+
+    <a
+        href="/officials"
+        class="back-button"
+    >
+        ← Back to Officials
+    </a>
+
+
+    <h1 class="page-title">
+        Edit Official
+    </h1>
+
+
+    <div class="subtitle">
+        Update official information
+    </div>
+
+
+    <div
+        style="
+            background: white;
+            border: 1px solid #e1e5ec;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+        "
+    >
+
+
+        <form
+            action="/officials/edit/<%= official.officialid %>"
+            method="POST"
+        >
+
+
+            <!-- FULL NAME -->
+
+            <label
+                for="fullname"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Full Name
+            </label>
+
+
+            <input
+                id="fullname"
+                type="text"
+                name="fullname"
+                value="<%= official.fullname || '' %>"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 18px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- ROLE -->
+
+            <label
+                for="role"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Role
+            </label>
+
+
+            <input
+                id="role"
+                type="text"
+                name="role"
+                value="<%= official.role || '' %>"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 18px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- PHONE -->
+
+            <label
+                for="phone"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Phone
+            </label>
+
+
+            <input
+                id="phone"
+                type="text"
+                name="phone"
+                value="<%= official.phone || '' %>"
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 18px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- EMAIL -->
+
+            <label
+                for="email"
+                style="
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: bold;
+                "
+            >
+                Email
+            </label>
+
+
+            <input
+                id="email"
+                type="email"
+                name="email"
+                value="<%= official.email || '' %>"
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-bottom: 25px;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    font-size: 16px;
+                "
+            >
+
+
+            <!-- BUTTONS -->
+
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                Update Official
+            </button>
+
+
+            <a
+                href="/officials"
+                class="button button-secondary"
+                style="
+                    margin-left: 10px;
+                "
+            >
+                Cancel
+            </a>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<%- include('../partials/footer') %>

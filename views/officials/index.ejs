@@ -1,0 +1,191 @@
+<%- include('../partials/navigation') %>
+
+<%
+    const officialUser = (typeof currentUser !== 'undefined' && currentUser)
+        ? currentUser
+        : (typeof user !== 'undefined' && user ? user : null);
+    const officialRole = String(officialUser?.actualRole || officialUser?.role || '').trim().toLowerCase();
+    const canManageOfficials = ['admin', 'to', 'technical official', 'technical_official', 'technical-official'].includes(officialRole);
+%>
+
+<link rel="stylesheet" href="/css/arab-officials.css">
+
+<main class="arab-page arab-officials-page">
+    <section class="arab-page-heading officials-heading">
+        <div>
+            <div class="arab-eyebrow">ARAB MANAGEMENT SYSTEM</div>
+            <h1 class="page-title">Officials</h1>
+            <p class="arab-page-subtitle">Manage referees and basketball officials</p>
+        </div>
+
+        <% if (canManageOfficials) { %>
+            <a href="/officials/new" class="arab-btn arab-btn-primary officials-add-btn">
+                <span aria-hidden="true">＋</span> Add New Official
+            </a>
+        <% } %>
+    </section>
+
+    <section class="arab-card officials-list-card">
+        <div class="officials-search-area">
+            <label class="officials-search-label" for="searchOfficials">Search officials</label>
+            <div class="officials-search-wrap">
+                <span class="officials-search-icon" aria-hidden="true">⌕</span>
+                <input
+                    type="search"
+                    id="searchOfficials"
+                    class="officials-search"
+                    placeholder="Search by name, role, phone or email..."
+                    autocomplete="off"
+                    aria-controls="officialTable"
+                >
+                <button type="button" id="clearOfficialsSearch" class="officials-search-clear" hidden aria-label="Clear search">×</button>
+            </div>
+        </div>
+
+        <div class="officials-list-header">
+            <div>
+                <h2 class="officials-section-title">Officials</h2>
+                <p class="officials-section-subtitle">Registered referees and other basketball officials</p>
+            </div>
+            <span id="officialsCount" class="officials-count-badge"><%= officials ? officials.length : 0 %> officials</span>
+        </div>
+
+        <% if (!officials || officials.length === 0) { %>
+            <div class="officials-empty-state">
+                <div class="officials-empty-icon" aria-hidden="true">◉</div>
+                <h3>No officials found</h3>
+                <p>There are currently no officials registered in the system.</p>
+                <% if (canManageOfficials) { %>
+                    <a href="/officials/new" class="arab-btn arab-btn-primary">Add New Official</a>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="officials-table-wrap">
+                <table class="arab-table officials-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <% if (canManageOfficials) { %><th class="officials-action-col">Actions</th><% } %>
+                        </tr>
+                    </thead>
+                    <tbody id="officialTable">
+                        <% officials.forEach(function(official) { %>
+                            <tr class="official-row">
+                                <td data-label="ID">
+                                    <span class="official-id">#<%= official.officialid %></span>
+                                </td>
+                                <td data-label="Full Name">
+                                    <div class="official-name-cell">
+                                        <span class="official-avatar" aria-hidden="true"><%= String(official.fullname || 'U').trim().charAt(0).toUpperCase() %></span>
+                                        <strong><%= official.fullname || '—' %></strong>
+                                    </div>
+                                </td>
+                                <td data-label="Role">
+                                    <span class="official-role-badge"><%= official.role || '—' %></span>
+                                </td>
+                                <td data-label="Phone"><%= official.phone || '—' %></td>
+                                <td data-label="Email"><%= official.email || '—' %></td>
+                                <% if (canManageOfficials) { %>
+                                    <td data-label="Actions" class="officials-action-cell">
+                                        <a href="/officials/edit/<%= official.officialid %>" class="arab-btn arab-btn-secondary arab-btn-small">Edit</a>
+                                        <form action="/officials/delete/<%= official.officialid %>" method="POST" class="official-delete-form" onsubmit="return confirm('Are you sure you want to delete this official?');">
+                                            <button type="submit" class="arab-btn arab-btn-danger arab-btn-small">Delete</button>
+                                        </form>
+                                    </td>
+                                <% } %>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="officialsNoResults" class="officials-no-results" hidden>
+                <div class="officials-no-results-icon" aria-hidden="true">⌕</div>
+                <h3>No matching officials</h3>
+                <p>Try a different name, role, phone number or email.</p>
+            </div>
+
+            <div class="officials-mobile-list" id="officialsMobileList">
+                <% officials.forEach(function(official) { %>
+                    <article class="official-mobile-card official-row-mobile">
+                        <div class="official-mobile-top">
+                            <div class="official-name-cell">
+                                <span class="official-avatar" aria-hidden="true"><%= String(official.fullname || 'U').trim().charAt(0).toUpperCase() %></span>
+                                <div>
+                                    <strong><%= official.fullname || '—' %></strong>
+                                    <span class="official-mobile-id">#<%= official.officialid %></span>
+                                </div>
+                            </div>
+                            <span class="official-role-badge"><%= official.role || '—' %></span>
+                        </div>
+
+                        <div class="official-mobile-details">
+                            <div><span>Phone</span><strong><%= official.phone || '—' %></strong></div>
+                            <div><span>Email</span><strong><%= official.email || '—' %></strong></div>
+                        </div>
+
+                        <% if (canManageOfficials) { %>
+                            <div class="official-mobile-actions">
+                                <a href="/officials/edit/<%= official.officialid %>" class="arab-btn arab-btn-secondary">Edit</a>
+                                <form action="/officials/delete/<%= official.officialid %>" method="POST" class="official-delete-form" onsubmit="return confirm('Are you sure you want to delete this official?');">
+                                    <button type="submit" class="arab-btn arab-btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </article>
+                <% }); %>
+            </div>
+        <% } %>
+    </section>
+</main>
+
+<script>
+(function () {
+    const searchBox = document.getElementById('searchOfficials');
+    const clearButton = document.getElementById('clearOfficialsSearch');
+    const tableBody = document.getElementById('officialTable');
+    const noResults = document.getElementById('officialsNoResults');
+    const countBadge = document.getElementById('officialsCount');
+    const mobileCards = Array.from(document.querySelectorAll('.official-row-mobile'));
+
+    if (!searchBox) return;
+
+    function updateResults() {
+        const query = searchBox.value.toLowerCase().trim();
+        let visible = 0;
+
+        if (tableBody) {
+            tableBody.querySelectorAll('.official-row').forEach(function (row) {
+                const matches = !query || row.textContent.toLowerCase().includes(query);
+                row.hidden = !matches;
+                if (matches) visible++;
+            });
+        }
+
+        mobileCards.forEach(function (card) {
+            const matches = !query || card.textContent.toLowerCase().includes(query);
+            card.hidden = !matches;
+        });
+
+        if (noResults) noResults.hidden = visible !== 0;
+        if (clearButton) clearButton.hidden = !query;
+        if (countBadge) countBadge.textContent = visible + (visible === 1 ? ' official' : ' officials');
+    }
+
+    searchBox.addEventListener('input', updateResults);
+
+    if (clearButton) {
+        clearButton.addEventListener('click', function () {
+            searchBox.value = '';
+            searchBox.focus();
+            updateResults();
+        });
+    }
+})();
+</script>
+
+<%- include('../partials/footer') %>
