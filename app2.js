@@ -421,11 +421,39 @@ app.use('/', viewAll, assignedGamesRoutes);
 
 // ======================================================
 // COMPETITIONS
-// ------------------------------------------------------
-// Competition-specific permissions are handled entirely
-// inside routes/competitions.js.
+// Admin full; Finance view; Official/TO no access.
 // ======================================================
-app.use('/', competitionsRoutes);
+function competitionsAccess(req, res, next) {
+    const pathName = String(req.path || '');
+
+    // Only apply Competition permissions to Competition URLs.
+    if (
+        pathName !== '/competitions' &&
+        !pathName.startsWith('/competitions/')
+    ) {
+        return next();
+    }
+
+    const actualRole = String(
+        req.user?.actualRole || req.user?.role || ''
+    ).trim().toLowerCase();
+
+    // Admin: full Competition access
+    if (actualRole === 'admin') {
+        return next();
+    }
+
+    // Finance: GET/read-only Competition access
+    if (actualRole === 'finance' && req.method === 'GET') {
+        return next();
+    }
+
+    return res.status(403).send(
+        'Access denied. You do not have permission to access Competitions.'
+    );
+}
+
+app.use('/', competitionsAccess, competitionsRoutes);
 
 // ======================================================
 // STATISTICS
