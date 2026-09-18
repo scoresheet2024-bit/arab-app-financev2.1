@@ -21,17 +21,17 @@
     </section>
 
     <section class="arab-assigned-kpis" aria-label="Assigned games summary">
+        <article class="arab-assigned-kpi arab-assigned-kpi-green" id="myAssignedKpiCard" role="button" tabindex="0" style="cursor: pointer;">
+        <div class="arab-assigned-kpi-icon">✓</div>
+            <div><span>My assigned Games</span><strong><%= canSubmitCount %></strong><small><%= role === 'admin' ? 'Administrator access' : 'Based on your assignments' %></small></div>
+        </article>
         <article class="arab-assigned-kpi arab-assigned-kpi-blue">
             <div class="arab-assigned-kpi-icon">▣</div>
-            <div><span>Assigned Games</span><strong><%= assignedGames.length %></strong><small>Games currently assigned</small></div>
+            <div><span>all Assigned Games</span><strong><%= assignedGames.length %></strong><small>Games currently assigned</small></div>
         </article>
         <article class="arab-assigned-kpi arab-assigned-kpi-yellow">
             <div class="arab-assigned-kpi-icon">◷</div>
             <div><span>Awaiting Reports</span><strong><%= assignedGames.filter(game => !game.report_submitted).length %></strong><small>Reports still required</small></div>
-        </article>
-        <article class="arab-assigned-kpi arab-assigned-kpi-green">
-            <div class="arab-assigned-kpi-icon">✓</div>
-            <div><span>Reports I Can Submit</span><strong><%= canSubmitCount %></strong><small><%= role === 'admin' ? 'Administrator access' : 'Based on your assignments' %></small></div>
         </article>
     </section>
 
@@ -154,7 +154,21 @@
     const empty = document.getElementById('assignedNoResults');
 
     if (!search || !access || !rows.length) return;
-
+    const myAssignedCard = document.getElementById('myAssignedKpiCard');
+    if (myAssignedCard) {
+        const activateMyGames = () => {
+            access.value = 'can-report';
+            applyFilters();
+            document.getElementById('assignedGamesTable')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        myAssignedCard.addEventListener('click', activateMyGames);
+        myAssignedCard.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                activateMyGames();
+            }
+        });
+    }
     function applyFilters() {
         const query = search.value.trim().toLowerCase();
         const accessValue = access.value;

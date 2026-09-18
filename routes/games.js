@@ -1213,7 +1213,7 @@ router.post(
         // final report is submitted.
         // ==================================================
 
-        res.redirect('/assigned-games');
+        res.redirect('/games');
 
 
     } catch (error) {

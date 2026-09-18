@@ -12,7 +12,14 @@ function hashPassword(password) {
     const derivedKey = crypto.scryptSync(password, salt, 64);
     return `scrypt$${salt}$${derivedKey.toString('hex')}`;
 }
-
+function verifyPassword(password, storedHash) {
+    const [scheme, salt, key] = storedHash.split('$');
+    if (scheme !== 'scrypt') return false;
+    const derivedKey = crypto.scryptSync(password, salt, 64);
+    const keyBuffer = Buffer.from(key, 'hex');
+    return derivedKey.length === keyBuffer.length &&
+        crypto.timingSafeEqual(derivedKey, keyBuffer);
+}
 function validRole(role) {
     return ROLES.includes(role);
 }
@@ -244,7 +251,71 @@ router.post('/users/:id/toggle', requireRole('admin'), async (req, res) => {
         res.status(500).send('Error changing user status: ' + error.message);
     }
 });
+// ======================================================
+// CHANGE OWN PASSWORD
+// ======================================================
 
+router.get('/account/password', (req, res) => {
+    res.render('users/change-password', {
+        title: 'Change Password',
+        error: null
+    });
+});
+
+router.post('/account/password', async (req, res) => {
+    const currentPassword = req.body.currentPassword || '';
+    const newPassword = req.body.newPassword || '';
+    const confirmPassword = req.body.confirmPassword || '';
+    const userId = req.user.userid;
+
+    try {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            return res.status(400).render('users/change-password', {
+                title: 'Change Password',
+                error: 'All fields are required.'
+            });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).render('users/change-password', {
+                title: 'Change Password',
+                error: 'New password must contain at least 8 characters.'
+            });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).render('users/change-password', {
+                title: 'Change Password',
+                error: 'New password and confirmation do not match.'
+            });
+        }
+
+        const result = await pool.query(
+            `SELECT password_hash FROM public.users WHERE userid = $1`,
+            [userId]
+        );
+
+        if (result.rows.length === 0 || !verifyPassword(currentPassword, result.rows[0].password_hash)) {
+            return res.status(400).render('users/change-password', {
+                title: 'Change Password',
+                error: 'Current password is incorrect.'
+            });
+        }
+
+        await pool.query(
+            `UPDATE public.users SET password_hash = $1 WHERE userid = $2`,
+            [hashPassword(newPassword), userId]
+        );
+
+        res.redirect('/'); // adjust to wherever makes sense after success
+    } catch (error) {
+        console.error('Error changing password:', error);
+        res.status(500).render('users/change-password', {
+            title: 'Change Password',
+            error: 'Something went wrong. Please try again.'
+        });
+    }
+});
 // ======================================================
 // RESET PASSWORD
 // ======================================================

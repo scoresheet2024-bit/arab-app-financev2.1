@@ -143,9 +143,24 @@ if (
         return next();
     }
 
+// If not allowed
     return res.status(403).send(
         'Access denied. You do not have permission to access this page.'
     );
+}
+
+// ======================================================
+// UPDATE PASSWORD
+// ------------------------------------------------------
+// Available to every authenticated user.
+// This check must be outside the Competition permission block.
+// ======================================================
+// Update Password is available to every authenticated user.
+if (
+    pathName === '/account/password' ||
+    pathName === '/account/password/'
+) {
+    return next();
 }
 
 // Game Reports
@@ -330,6 +345,16 @@ app.use('/', gameReportAccess, gameReportsRoutes);
 // Finance: read-only game/report access.
 // ======================================================
 async function gamesAccess(req, res, next) {
+    const pathName = String(req.path || '');
+
+    // Only apply Games permissions to Games URLs.
+    if (
+        pathName !== '/games' &&
+        !pathName.startsWith('/games/')
+    ) {
+        return next();
+    }
+
     const actualRole = String(
         req.user?.actualRole || req.user?.role || ''
     ).trim().toLowerCase();
@@ -451,7 +476,7 @@ app.use('/', viewAll, officialActivityRoutes);
 // ======================================================
 // USER MANAGEMENT — Admin only.
 // ======================================================
-app.use('/', adminOnly, usersRoutes);
+app.use('/', usersRoutes);
 
 app.use((req, res) => {
     res.status(404).send('Page not found.');
