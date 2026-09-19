@@ -38,7 +38,7 @@ function competitionsAccess(req, res, next) {
     );
 }
 
-router.use(competitionsAccess);
+router.use('/competitions', competitionsAccess);
 
 // ======================================================
 // LIST ALL COMPETITIONS

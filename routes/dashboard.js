@@ -37,7 +37,34 @@ router.get('/', async (req, res) => {
         const competitionsResult = await pool.query(`SELECT COUNT(*) AS count FROM public.competitions`);
         const officialsResult = await pool.query(`SELECT COUNT(*) AS count FROM public.officials`);
         const pendingGamesResult = await pool.query(`SELECT COUNT(*) AS count FROM public.games WHERE assigned = FALSE`);
-        const assignedGamesResult = await pool.query(`SELECT COUNT(*) AS count FROM public.games WHERE assigned = TRUE`);
+        const assignedGamesResult = await pool.query(`
+            SELECT COUNT(*) AS count
+            FROM public.games g
+            WHERE g.assigned = TRUE
+              AND COALESCE(g.report_submitted, FALSE) = FALSE
+              AND (
+                    $1 = 'admin'
+                    OR (
+                        $2 > 0
+                        AND (
+                            EXISTS (
+                                SELECT 1
+                                FROM public.assignments a
+                                WHERE a.gameid = g.gameid
+                                  AND a.officialid = $2
+                            )
+                            OR g.official1_id = $2
+                            OR g.official2_id = $2
+                            OR g.official3_id = $2
+                            OR g.scorer_id = $2
+                            OR g.timer_id = $2
+                            OR g.shot_clock_operator_id = $2
+                            OR g.assistant_scorer_id = $2
+                            OR g.commissioner_id = $2
+                        )
+                    )
+              )
+        `, [actualRole, Number(req.user?.officialid) || 0]);
         const awaitingReportsResult = await pool.query(`
             SELECT COUNT(*) AS count
             FROM public.games
