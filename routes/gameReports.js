@@ -400,7 +400,7 @@ router.post('/games/report/:id/submit', requireRole('admin', 'official', 'to'), 
                     assigned = TRUE, report_submitted = TRUE,
                     report_submitted_by = $9
                 WHERE gameid = $10
-            `, [...ids, gameid]);
+            `, [...ids, req.user.fullname || req.user.username || 'Unknown User', gameid]);
         } else {
             await client.query(`
                 UPDATE public.games
