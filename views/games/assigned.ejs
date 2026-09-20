@@ -91,7 +91,7 @@
                         <tr class="arab-assigned-row" data-search="<%= searchText.replace(/&/g, '&amp;').replace(/"/g, '&quot;') %>" data-access="<%= game.can_report ? 'can-report' : 'view-only' %>">
                             <td data-label="Game">
                                 <div class="arab-game-id">#<%= game.gameid %></div>
-                                <div class="arab-matchup"><strong><%= game.teama %></strong><span>vs</span><strong><%= game.teamb %></strong></div>
+                                <div class="arab-matchup arab-mobile-matchup"><strong><%= game.teama %></strong><span>VS</span><strong><%= game.teamb %></strong></div>
                             </td>
                             <td data-label="Competition">
                                 <strong><%= game.competition || 'No competition' %></strong>

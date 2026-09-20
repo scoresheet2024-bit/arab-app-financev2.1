@@ -321,25 +321,135 @@
 }
 
 @media (max-width: 680px) {
+    /*
+     * MOBILE DESIGN 3
+     * Basketball dashboard / game-card presentation.
+     * Desktop/tablet layout remains unchanged.
+     */
+
+    .arab-assigned-page {
+        padding: 0 0 24px;
+    }
+
     .arab-page-heading {
         flex-direction: column;
-        gap: 14px;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0 0 14px;
+        padding: 0 14px;
     }
 
     .arab-page-heading h1 {
-        font-size: 27px;
+        font-size: 25px;
+        margin: 2px 0 4px;
+    }
+
+    .arab-page-heading p {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .arab-page-heading .arab-btn-secondary {
+        display: none;
+    }
+
+    /* Compact summary cards */
+    .arab-assigned-kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin: 0 12px 12px;
+    }
+
+    .arab-assigned-kpi {
+        min-height: 82px;
+        padding: 10px 7px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(16, 45, 82, 0.06);
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 5px;
+    }
+
+    .arab-assigned-kpi-icon {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+        border-radius: 9px;
+        font-size: 15px;
+    }
+
+    .arab-assigned-kpi span {
+        font-size: 9px;
+        line-height: 1.15;
+        margin-bottom: 2px;
+    }
+
+    .arab-assigned-kpi strong {
+        font-size: 19px;
+    }
+
+    .arab-assigned-kpi small {
+        display: none;
+    }
+
+    .arab-card.arab-assigned-card {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .arab-assigned-header {
+        padding: 14px 14px 11px;
+        border-bottom: 0;
+    }
+
+    .arab-assigned-header h2 {
+        font-size: 18px;
+        margin-bottom: 3px;
+    }
+
+    .arab-assigned-header p {
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .arab-count-badge {
+        padding: 6px 9px;
+        font-size: 10px;
     }
 
     .arab-assigned-toolbar {
         flex-direction: column;
         align-items: stretch;
+        gap: 8px;
+        padding: 10px 12px;
+        border-top: 1px solid #edf1f5;
+        border-bottom: 1px solid #edf1f5;
+    }
+
+    .arab-filter-search {
+        min-width: 0;
+        height: 40px;
+        border-radius: 10px;
     }
 
     .arab-filter-select {
         width: 100%;
+        height: 40px;
+        border-radius: 10px;
     }
 
-    .arab-assigned-table {
+    .arab-assigned-table-wrap {
+        overflow: visible;
+    }
+
+    .arab-assigned-table,
+    .arab-assigned-table tbody {
+        display: block;
+        width: 100%;
         min-width: 0;
     }
 
@@ -347,57 +457,240 @@
         display: none;
     }
 
-    .arab-assigned-table,
-    .arab-assigned-table tbody,
-    .arab-assigned-table tr,
+    .arab-assigned-table tr {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        width: 52%;
+        margin: 12px;
+        padding: 0 10px 12px;
+        border: 1px solid #e3eaf3;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 5px 18px rgba(16, 45, 82, 0.08);
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
     .arab-assigned-table td {
         display: block;
-        width: 100%;
-    }
-
-    .arab-assigned-table tr {
-        padding: 15px;
-        border-bottom: 1px solid #e5eaf0;
-        background: #fff;
-    }
-
-    .arab-assigned-table td {
-        display: grid;
-        grid-template-columns: 105px minmax(0, 1fr);
-        gap: 10px;
-        padding: 8px 0;
+        width: auto;
+        padding: 9px 7px;
         border: 0;
-        font-size: 13px;
+        font-size: 12px;
+        min-width: 0;
     }
 
     .arab-assigned-table td::before {
-        content: attr(data-label);
+        display: block;
+        margin-bottom: 5px;
         color: #667085;
-        font-size: 11px;
+        font-size: 9px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
     }
 
+    /* 1 — Hero matchup */
     .arab-assigned-table td[data-label="Game"] {
-        display: block;
-        padding-bottom: 12px;
+        grid-column: 1 / -1;
+        margin: 0 -10px;
+        padding: 15px 15px 17px;
+        min-height: 122px;
+        background: linear-gradient(135deg, #083d7a 0%, #1269ba 100%);
+        border-radius: 15px 15px 0 0;
+        color: #fff;
     }
 
     .arab-assigned-table td[data-label="Game"]::before {
         display: none;
     }
 
-    .arab-assigned-table td[data-label="Action"] {
-        padding-top: 12px;
+    .arab-game-id {
+        margin: 0 0 11px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 800;
     }
 
-    .arab-report-btn {
-        width: 100%;
-        justify-content: center;
+    .arab-mobile-matchup {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        color: #fff;
+    }
+
+    .arab-mobile-matchup strong {
+        color: #fff;
+        font-size: 20px;
+        line-height: 1.05;
+        overflow-wrap: anywhere;
+    }
+
+    .arab-mobile-matchup strong:last-child {
+        text-align: right;
+    }
+
+    .arab-mobile-matchup span {
+        color: #dcecff;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    /* 2–4 — Quick information tiles */
+    .arab-assigned-table td[data-label="Competition"],
+    .arab-assigned-table td[data-label="Date & Time"],
+    .arab-assigned-table td[data-label="Court"] {
+        margin-top: 10px;
+        padding: 11px 8px;
+        border: 1px solid #edf1f5;
+        background: #f8fafc;
+        border-radius: 10px;
+        min-height: 68px;
+    }
+
+    .arab-assigned-table td[data-label="Competition"] {
+        margin-left: 0;
+        margin-right: 3px;
+    }
+
+    .arab-assigned-table td[data-label="Date & Time"] {
+        margin-left: 3px;
+        margin-right: 3px;
+    }
+
+    .arab-assigned-table td[data-label="Court"] {
+        margin-left: 3px;
+        margin-right: 0;
+    }
+
+    .arab-assigned-table td[data-label="Competition"]::before {
+        content: "🏆  Competition";
+    }
+
+    .arab-assigned-table td[data-label="Date & Time"]::before {
+        content: "📅  Date & Time";
+    }
+
+    .arab-assigned-table td[data-label="Court"]::before {
+        content: "📍  Court";
+    }
+
+    .arab-assigned-table td[data-label="Competition"] strong,
+    .arab-assigned-table td[data-label="Date & Time"] strong,
+    .arab-assigned-table td[data-label="Court"] {
+        color: #172b4d;
+    }
+
+    .arab-assigned-table td[data-label="Competition"] strong,
+    .arab-assigned-table td[data-label="Date & Time"] strong {
+        font-size: 11px;
+    }
+
+    .arab-cell-muted {
+        margin-top: 3px;
+        font-size: 9px;
+    }
+
+    .arab-assigned-table td[data-label="Court"] {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* 5 — Officials */
+    .arab-assigned-table td[data-label="Officials"] {
+        grid-column: 1 / -1;
+        margin-top: 10px;
+        padding: 12px 9px;
+        border: 1px solid #e8edf4;
+        border-radius: 11px;
+        background: #fff;
+    }
+
+    .arab-assigned-table td[data-label="Officials"]::before {
+        content: "👥  Officials";
+        color: #1261c9;
+        font-size: 11px;
+        margin-bottom: 8px;
     }
 
     .arab-official-list {
         min-width: 0;
+        gap: 4px;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .arab-official-list b {
+        color: #344054;
+    }
+
+    .arab-official-list summary {
+        margin-top: 4px;
+        font-size: 11px;
+    }
+
+    /* 6 — Status badge sits in the hero */
+    .arab-assigned-table td[data-label="Status"] {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        z-index: 2;
+        padding: 0;
+        border: 0;
+    }
+
+    .arab-assigned-table td[data-label="Status"]::before {
+        display: none;
+    }
+
+    .arab-status {
+        padding: 6px 9px;
+        font-size: 9px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+    }
+
+    /* 7 — Full-width action */
+    .arab-assigned-table td[data-label="Action"] {
+        grid-column: 1 / -1;
+        padding: 11px 0 0;
+    }
+
+    .arab-assigned-table td[data-label="Action"]::before {
+        display: none;
+    }
+
+    .arab-report-btn {
+        width: 100%;
+        min-height: 46px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .arab-access-badge {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        min-height: 42px;
+        box-sizing: border-box;
+        align-items: center;
+    }
+
+    .arab-filter-empty {
+        padding: 28px 16px;
+    }
+
+    .arab-assigned-empty {
+        padding: 48px 18px;
+    }
+}
+    @media (max-width: 680px) {
+    .arab-assigned-table tr[hidden] {
+        display: none !important;
     }
 }
