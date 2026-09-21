@@ -18,7 +18,8 @@
         const icons = {
             dashboard: '⌂', competitions: '♜', games: '◉', assigned: '▣',
             officials: '♟', activity: '▤', finance: '◫', users: '♙',
-            statistics: '◒', reports: '▤', settings: '⚙', logout: '↪'
+            statistics: '◒', reports: '▤', settings: '⚙',
+            availability: '◷', logout: '↪'
         };
         return icons[name] || '•';
     };
@@ -40,6 +41,7 @@
             ${navLink('/assigned-games', 'Assigned Games', 'assigned')}
             ${navLink('/officials', 'Officials', 'officials')}
             ${navLink('/official-activity', 'Official Activity', 'activity')}
+            ${navLink('/my-availability', 'Availability', 'availability')}
             ${navLink('/finance', 'Finance', 'finance')}
             ${navLink('/users', 'User Management', 'users')}
             <button type="button" id="arabReportsToggle" class="arab-reports-toggle" onclick="toggleARABReports()" aria-expanded="false">
@@ -58,6 +60,7 @@
             ${navLink('/games', 'Games', 'games')}
             ${navLink('/assigned-games', 'Assigned Games', 'assigned')}
             ${navLink('/official-activity', 'Official Activity', 'activity')}
+            ${navLink('/my-availability', 'Availability', 'availability')}
             ${navLink('/finance', 'Finance', 'finance')}
         `;
     } else if (navRole === 'to') {
@@ -68,6 +71,7 @@
             ${navLink('/assigned-games', 'Assigned Games', 'assigned')}
             ${navLink('/officials', 'Officials', 'officials')}
             ${navLink('/official-activity', 'Official Activity', 'activity')}
+            ${navLink('/my-availability', 'Availability', 'availability')}
         `;
     } else if (navRole === 'referee' || navRole === 'official') {
         navContent = `
@@ -75,6 +79,7 @@
             ${navLink('/games', 'Games', 'games')}
             ${navLink('/assigned-games', 'Assigned Games', 'assigned')}
             ${navLink('/official-activity', 'Official Activity', 'activity')}
+            ${navLink('/my-availability', 'Availability', 'availability')}
         `;
     } else {
         navContent = navLink('/', 'Dashboard', 'dashboard');
@@ -87,6 +92,7 @@
 <link rel="stylesheet" href="/css/arab-design.css">
 <link rel="stylesheet" href="/css/arab-layout.css">
 <link rel="stylesheet" href="/css/arab-responsive.css">
+<link rel="stylesheet" href="/css/availability.css">
 
 <aside id="arabSidebar" class="arab-sidebar" aria-label="ARAB main navigation">
     <div class="arab-sidebar-brand">

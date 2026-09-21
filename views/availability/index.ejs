@@ -1,143 +1,274 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f5f7fb; color: #172033; }
-        .main { padding: 35px; max-width: 1400px; margin: 0 auto; }
-        .page-title { font-size: 36px; margin: 0 0 8px; }
-        .subtitle { color: #667085; font-size: 17px; margin-bottom: 28px; }
-        .grid { display: grid; grid-template-columns: minmax(320px, 1fr) minmax(420px, 1.4fr); gap: 24px; align-items: start; }
-        .card { background: white; border: 1px solid #e1e5ec; border-radius: 14px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,.04); margin-bottom: 24px; }
-        .card h2 { margin: 0 0 20px; font-size: 22px; }
-        label { display: block; font-weight: 700; color: #344054; margin-bottom: 7px; }
-        input[type="date"], textarea { width: 100%; padding: 12px 13px; border: 1px solid #ccd2da; border-radius: 7px; font-size: 15px; margin-bottom: 16px; }
-        textarea { min-height: 95px; resize: vertical; font-family: inherit; }
-        .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        button, .button { display: inline-block; border: 0; border-radius: 7px; padding: 11px 16px; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 14px; }
-        .primary { background: #1769e0; color: white; }
-        .secondary { background: #6c757d; color: white; }
-        .danger { background: #dc3545; color: white; }
-        .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .period { border: 1px solid #e1e5ec; border-radius: 10px; padding: 15px; margin-bottom: 12px; }
-        .period:last-child { margin-bottom: 0; }
-        .period-dates { font-weight: 700; margin-bottom: 6px; }
-        .reason { color: #667085; font-size: 14px; margin-bottom: 12px; white-space: pre-wrap; }
-        .empty { color: #667085; padding: 25px 5px; text-align: center; }
-        .calendar-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 18px; }
-        .month-title { font-size: 20px; font-weight: 700; }
-        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid #e1e5ec; border-radius: 10px; overflow: hidden; }
-        .weekday { background: #f2f4f7; font-weight: 700; color: #475467; padding: 10px 5px; text-align: center; font-size: 13px; }
-        .day { min-height: 72px; border-top: 1px solid #e1e5ec; border-right: 1px solid #e1e5ec; padding: 8px; background: white; }
-        .day:nth-child(7n) { border-right: 0; }
-        .day.empty-day { background: #fafafa; }
-        .day-number { font-weight: 700; }
-        .day.unavailable { background: #fee2e2; color: #991b1b; }
-        .day.unavailable .day-number { color: #991b1b; }
-        .legend { margin-top: 12px; font-size: 13px; color: #667085; }
-        .legend span { display: inline-block; width: 13px; height: 13px; background: #fee2e2; border: 1px solid #fecaca; vertical-align: -2px; margin-right: 5px; border-radius: 3px; }
-        .notice { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px 14px; border-radius: 8px; margin-bottom: 18px; }
-        @media(max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-        @media(max-width: 600px) { .main { padding: 18px; } .date-row { grid-template-columns: 1fr; } .day { min-height: 55px; padding: 6px; } }
-    </style>
-</head>
-<body>
-    <%- include('../partials/navigation') %>
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navigation') %>
 
-    <main class="main">
-        <h1 class="page-title">My Availability</h1>
-        <p class="subtitle">Manage the dates when you are unavailable for game assignments.</p>
+<main class="arab-page availability-page">
+    <div class="availability-container">
 
-        <div class="notice">
-            <strong><%= official.fullname %></strong> — dates marked in red are unavailable.
+        <div class="availability-page-header">
+            <div>
+                <h1><%= title %></h1>
+                <p>
+                    <%= isAdmin
+                        ? 'View and manage availability for all officials.'
+                        : 'You are available by default. Add only the periods when you cannot officiate.' %>
+                </p>
+            </div>
         </div>
 
-        <div class="grid">
-            <section>
-                <div class="card">
-                    <h2><%= editAvailability ? 'Modify Unavailable Period' : 'Mark Unavailable' %></h2>
-                    <form method="POST" action="<%= editAvailability ? '/my-availability/' + editAvailability.availabilityid : '/my-availability' %>">
-                        <div class="date-row">
-                            <div>
-                                <label for="start_date">Start date</label>
-                                <input id="start_date" name="start_date" type="date" required value="<%= editAvailability ? String(editAvailability.start_date).slice(0,10) : '' %>">
-                            </div>
-                            <div>
-                                <label for="end_date">End date</label>
-                                <input id="end_date" name="end_date" type="date" required value="<%= editAvailability ? String(editAvailability.end_date).slice(0,10) : '' %>">
-                            </div>
-                        </div>
+        <% if (success) { %>
+            <div class="availability-alert availability-alert-success">
+                <%= success %>
+            </div>
+        <% } %>
 
-                        <label for="reason">Reason (optional)</label>
-                        <textarea id="reason" name="reason" placeholder="Optional reason for your unavailability"><%= editAvailability ? (editAvailability.reason || '') : '' %></textarea>
-
-                        <div class="actions">
-                            <button class="primary" type="submit"><%= editAvailability ? 'Save Changes' : 'Add Unavailable Period' %></button>
-                            <% if (editAvailability) { %>
-                                <a class="button secondary" href="/my-availability">Cancel</a>
-                            <% } %>
-                        </div>
-                    </form>
+        <% if (isAdmin) { %>
+            <section class="availability-card">
+                <div class="availability-card-header">
+                    <div>
+                        <h2>Officials</h2>
+                        <p>Select an official to view or manage availability.</p>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h2>Unavailable Periods</h2>
-                    <% if (!availability.length) { %>
-                        <div class="empty">You have no unavailable periods.</div>
-                    <% } else { %>
-                        <% availability.forEach(period => { %>
-                            <div class="period">
-                                <div class="period-dates">
-                                    <%= new Date(period.start_date).toLocaleDateString('en-GB') %>
-                                    —
-                                    <%= new Date(period.end_date).toLocaleDateString('en-GB') %>
-                                </div>
-                                <% if (period.reason) { %>
-                                    <div class="reason"><%= period.reason %></div>
-                                <% } else { %>
-                                    <div class="reason">No reason provided.</div>
-                                <% } %>
-                                <div class="actions">
-                                    <a class="button secondary" href="/my-availability?edit=<%= period.availabilityid %>">Modify</a>
-                                    <form method="POST" action="/my-availability/<%= period.availabilityid %>/delete" onsubmit="return confirm('Remove this unavailable period?');">
-                                        <button class="danger" type="submit">Remove</button>
-                                    </form>
-                                </div>
+                <div class="availability-official-grid">
+                    <% officials.forEach(item => { %>
+                        <a
+                            class="availability-official-card <%= item.current_status === 'Not Available' ? 'is-unavailable' : 'is-available' %> <%= selectedOfficialId == item.officialid ? 'selected' : '' %>"
+                            href="/my-availability?officialid=<%= item.officialid %>"
+                        >
+                            <div class="availability-official-name">
+                                <%= item.fullname %>
                             </div>
-                        <% }); %>
+                            <div class="availability-official-role">
+                                <%= item.role || 'Official' %>
+                            </div>
+                            <div class="availability-status <%= item.current_status === 'Available' ? 'available' : 'unavailable' %>">
+                                <span class="availability-status-dot"></span>
+                                <%= item.current_status %>
+                            </div>
+
+                            <% if (item.current_status === 'Not Available' && item.active_start_date && item.active_end_date) { %>
+                                <div class="availability-card-period">
+                                    <span>Unavailable:</span>
+                                    <strong>
+                                        <%= new Date(item.active_start_date).toLocaleDateString() %>
+                                        –
+                                        <%= new Date(item.active_end_date).toLocaleDateString() %>
+                                    </strong>
+                                </div>
+                            <% } %>
+                        </a>
+                    <% }) %>
+
+                    <% if (officials.length === 0) { %>
+                        <div class="availability-empty">
+                            No officials were found.
+                        </div>
                     <% } %>
                 </div>
             </section>
+        <% } %>
 
-            <section class="card">
-                <div class="calendar-head">
-                    <a class="button secondary" href="/my-availability?month=<%= previousMonth %>">←</a>
-                    <div class="month-title"><%= monthLabel %></div>
-                    <a class="button secondary" href="/my-availability?month=<%= nextMonth %>">→</a>
-                </div>
+        <% if (official) { %>
+            <section class="availability-card">
+                <div class="availability-profile">
+                    <div>
+                        <h2><%= official.fullname %></h2>
+                        <p><%= official.role || 'Official' %></p>
+                    </div>
 
-                <div class="calendar">
-                    <% ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(day => { %>
-                        <div class="weekday"><%= day %></div>
-                    <% }); %>
-
-                    <% calendarDays.forEach(day => { %>
-                        <% if (day === null) { %>
-                            <div class="day empty-day"></div>
-                        <% } else { %>
-                            <div class="day <%= day.unavailable ? 'unavailable' : '' %>" title="<%= day.reason || (day.unavailable ? 'Unavailable' : '') %>">
-                                <div class="day-number"><%= day.number %></div>
-                            </div>
+                    <div class="availability-current-status <%= currentStatus === 'Available' ? 'available' : 'unavailable' %>">
+                        <span class="availability-status-dot"></span>
+                        <strong><%= currentStatus %></strong>
+                        <% if (currentStatus === 'Available') { %>
+                            <small>Available by default</small>
+                        <% } else if (activeRecord) { %>
+                            <small>
+                                <%= new Date(activeRecord.start_date).toLocaleDateString() %>
+                                –
+                                <%= new Date(activeRecord.end_date).toLocaleDateString() %>
+                            </small>
                         <% } %>
-                    <% }); %>
+                    </div>
+                </div>
+            </section>
+
+            <section class="availability-card">
+                <div class="availability-card-header">
+                    <div>
+                        <h2>Add Unavailability</h2>
+                        <p>
+                            Use this only for a period when the official cannot officiate.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="legend"><span></span> Unavailable</div>
+                <form action="/my-availability" method="POST" class="availability-form">
+                    <% if (isAdmin) { %>
+                        <input type="hidden" name="officialid" value="<%= official.officialid %>">
+                    <% } %>
+
+                    <div class="availability-form-grid">
+                        <label>
+                            <span>From</span>
+                            <input
+                                type="date"
+                                name="start_date"
+                                <%= !isAdmin ? `min="${today}"` : '' %>
+                                required
+                            >
+                        </label>
+
+                        <label>
+                            <span>To</span>
+                            <input
+                                type="date"
+                                name="end_date"
+                                <%= !isAdmin ? `min="${today}"` : '' %>
+                                required
+                            >
+                        </label>
+
+                        <label class="availability-reason-field">
+                            <span>Reason <em>(optional)</em></span>
+                            <input
+                                type="text"
+                                name="reason"
+                                maxlength="250"
+                                placeholder="e.g. Travel, personal commitment"
+                            >
+                        </label>
+                    </div>
+
+                    <div class="availability-form-actions">
+                        <button type="submit" class="availability-primary-button">
+                            + Add Unavailability
+                        </button>
+                    </div>
+                </form>
             </section>
-        </div>
-    </main>
+
+            <section class="availability-card">
+                <div class="availability-card-header">
+                    <div>
+                        <h2>Availability History</h2>
+                        <p>Upcoming periods are shown first.</p>
+                    </div>
+                </div>
+
+                <% if (availability.length > 0) { %>
+                    <div class="availability-table-wrap">
+                        <table class="availability-table">
+                            <thead>
+                                <tr>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Status</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% availability.forEach(item => {
+                                    const today = new Date().toISOString().slice(0, 10);
+                                    const start = String(item.start_date).slice(0, 10);
+                                    const end = String(item.end_date).slice(0, 10);
+                                    const isActive = start <= today && today <= end;
+                                    const isPast = end < today;
+                                %>
+                                    <tr>
+                                        <td><%= new Date(item.start_date).toLocaleDateString() %></td>
+                                        <td><%= new Date(item.end_date).toLocaleDateString() %></td>
+                                        <td>
+                                            <% if (isActive) { %>
+                                                <span class="availability-badge unavailable">Not Available</span>
+                                            <% } else if (isPast) { %>
+                                                <span class="availability-badge past">Past</span>
+                                            <% } else { %>
+                                                <span class="availability-badge upcoming">Upcoming</span>
+                                            <% } %>
+                                        </td>
+                                        <td><%= item.reason || '—' %></td>
+                                        <td>
+                                            <div class="availability-actions">
+                                                <details class="availability-edit-details">
+                                                    <summary>Edit</summary>
+                                                    <form
+                                                        action="/my-availability/edit/<%= item.availabilityid %>"
+                                                        method="POST"
+                                                        class="availability-edit-form"
+                                                    >
+                                                        <% if (isAdmin) { %>
+                                                            <input type="hidden" name="officialid" value="<%= official.officialid %>">
+                                                        <% } %>
+                                                        <label>
+                                                            From
+                                                            <input
+                                                                type="date"
+                                                                name="start_date"
+                                                                value="<%= String(item.start_date).slice(0, 10) %>"
+                                                                <%= !isAdmin ? `min="${today}"` : '' %>
+                                                                required
+                                                            >
+                                                        </label>
+                                                        <label>
+                                                            To
+                                                            <input
+                                                                type="date"
+                                                                name="end_date"
+                                                                value="<%= String(item.end_date).slice(0, 10) %>"
+                                                                <%= !isAdmin ? `min="${today}"` : '' %>
+                                                                required
+                                                            >
+                                                        </label>
+                                                        <label>
+                                                            Reason
+                                                            <input
+                                                                type="text"
+                                                                name="reason"
+                                                                maxlength="250"
+                                                                value="<%= item.reason || '' %>"
+                                                            >
+                                                        </label>
+                                                        <button type="submit" class="availability-save-button">
+                                                            Save
+                                                        </button>
+                                                    </form>
+                                                </details>
+
+                                                <form
+                                                    action="/my-availability/delete/<%= item.availabilityid %>"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Delete this unavailability period?');"
+                                                >
+                                                    <button type="submit" class="availability-delete-button">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="availability-empty">
+                        No unavailability periods have been recorded.
+                        <strong>This official is available by default.</strong>
+                    </div>
+                <% } %>
+            </section>
+        <% } %>
+
+        <% if (!official && isAdmin) { %>
+            <section class="availability-card availability-empty">
+                Select an official above to view their availability.
+            </section>
+        <% } %>
+
+    </div>
+</main>
+
 </body>
 </html>
