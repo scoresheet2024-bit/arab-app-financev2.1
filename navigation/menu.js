@@ -32,6 +32,7 @@ function renderNavigation(user = null) {
             ${link('/games', 'Games', 'games')}
             ${link('/assigned-games', 'Assigned Games', 'assigned')}
             ${link('/officials', 'Officials', 'officials')}
+            ${link('/games/pending', 'Pending Approval', 'activity')}
             ${link('/official-activity', 'Official Activity', 'activity')}
             ${link('/finance', 'Finance', 'finance')}
             ${link('/users', 'User Management', 'users')}
@@ -60,6 +61,7 @@ function renderNavigation(user = null) {
             ${link('/games', 'Games', 'games')}
             ${link('/assigned-games', 'Assigned Games', 'assigned')}
             ${link('/officials', 'Officials', 'officials')}
+            ${link('/games/pending', 'Pending Approval', 'activity')}
             ${link('/official-activity', 'Official Activity', 'activity')}
         `;
     } else if (role === 'referee' || role === 'official') {

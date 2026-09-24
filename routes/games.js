@@ -274,8 +274,6 @@ router.get(
     try {
 
         const id = req.params.id;
-
-
         const result = await pool.query(`
 
             SELECT
@@ -284,20 +282,35 @@ router.get(
 
                 c.competitionname AS competition,
 
-                c.season
+                c.season,
+
+                o1.fullname AS referee1,
+                o2.fullname AS umpire1,
+                o3.fullname AS umpire2,
+                o4.fullname AS scorer,
+                o5.fullname AS timer,
+                o6.fullname AS shot_clock_operator,
+                o7.fullname AS assistant_scorer,
+                o8.fullname AS commissioner
 
             FROM public.games g
 
             LEFT JOIN public.competitions c
+                ON g.competitionid = c.competitionid
 
-                ON g.competitionid =
-                   c.competitionid
+            LEFT JOIN public.officials o1 ON g.official1_id = o1.officialid
+            LEFT JOIN public.officials o2 ON g.official2_id = o2.officialid
+            LEFT JOIN public.officials o3 ON g.official3_id = o3.officialid
+            LEFT JOIN public.officials o4 ON g.scorer_id = o4.officialid
+            LEFT JOIN public.officials o5 ON g.timer_id = o5.officialid
+            LEFT JOIN public.officials o6 ON g.shot_clock_operator_id = o6.officialid
+            LEFT JOIN public.officials o7 ON g.assistant_scorer_id = o7.officialid
+            LEFT JOIN public.officials o8 ON g.commissioner_id = o8.officialid
 
             WHERE
                 g.gameid = $1
 
         `, [id]);
-
 
         // ==============================================
         // GAME NOT FOUND
@@ -760,9 +773,13 @@ router.post(
 
                 assigned = TRUE,
 
-                report_submitted = FALSE
+                report_submitted = FALSE,
 
-             WHERE gameid = $9`,
+                approval_status = 'pending',
+
+                last_modified_by = $9
+
+             WHERE gameid = $10`,
 
             [
 
@@ -781,6 +798,8 @@ router.post(
                 assistantScorerId,
 
                 commissionerId,
+
+                req.user.userid,
 
                 gameid
 
@@ -839,13 +858,113 @@ router.post(
         );
 
 
-    } finally {
+        } finally {
 
         // ==================================================
         // RELEASE CONNECTION
         // ==================================================
 
         client.release();
+
+    }
+
+});
+
+// ======================================================
+// PENDING APPROVAL - LIST
+// ======================================================
+
+router.get(
+    '/games/pending',
+    requireRole('admin', 'to'),
+    async (req, res) => {
+
+    try {
+
+        const result = await pool.query(`
+
+            SELECT
+                g.gameid, g.teama, g.teamb, g.gamedate, g.gametime, g.court,
+                c.competitionname AS competition, c.season,
+                g.last_modified_by,
+                o1.fullname AS referee1,
+                o2.fullname AS umpire1,
+                o3.fullname AS umpire2,
+                o4.fullname AS scorer,
+                o5.fullname AS timer,
+                o6.fullname AS shot_clock_operator,
+                o7.fullname AS assistant_scorer,
+                o8.fullname AS commissioner
+
+            FROM public.games g
+            LEFT JOIN public.competitions c ON g.competitionid = c.competitionid
+            LEFT JOIN public.officials o1 ON g.official1_id = o1.officialid
+            LEFT JOIN public.officials o2 ON g.official2_id = o2.officialid
+            LEFT JOIN public.officials o3 ON g.official3_id = o3.officialid
+            LEFT JOIN public.officials o4 ON g.scorer_id = o4.officialid
+            LEFT JOIN public.officials o5 ON g.timer_id = o5.officialid
+            LEFT JOIN public.officials o6 ON g.shot_clock_operator_id = o6.officialid
+            LEFT JOIN public.officials o7 ON g.assistant_scorer_id = o7.officialid
+            LEFT JOIN public.officials o8 ON g.commissioner_id = o8.officialid
+
+            WHERE g.approval_status = 'pending'
+  		AND g.assigned = TRUE
+  		AND COALESCE(g.report_submitted, FALSE) = FALSE
+
+            ORDER BY g.gamedate ASC, g.gametime ASC
+
+        `);
+
+        res.render('games/pending', { games: result.rows, currentUser: req.user });
+
+    } catch (error) {
+
+        console.error('Error loading pending approvals:', error);
+
+        res.status(500).send('Error loading pending approvals: ' + error.message);
+
+    }
+
+});
+
+// ======================================================
+// APPROVE / PUBLISH A PENDING ASSIGNMENT
+// ======================================================
+
+router.post(
+    '/games/:id/approve',
+    requireRole('admin', 'to'),
+    async (req, res) => {
+
+    try {
+
+        const gameid = req.params.id;
+
+        const check = await pool.query(
+            `SELECT last_modified_by FROM public.games WHERE gameid = $1`,
+            [gameid]
+        );
+
+        if (check.rows.length === 0) {
+            return res.status(404).send('Game not found.');
+        }
+
+        if (check.rows[0].last_modified_by === req.user.userid) {
+            return res.status(403).send('You cannot approve a change you made yourself.');
+        }
+
+        await pool.query(
+            `UPDATE public.games SET approval_status = 'approved' WHERE gameid = $1`,
+            [gameid]
+        );
+
+        res.redirect('/games/pending');
+
+    } catch (error) {
+
+        console.error('Error approving game:', error);
+
+        res.status(500).send('Error approving game: ' + error.message);
 
     }
 

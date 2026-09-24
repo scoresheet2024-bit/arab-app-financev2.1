@@ -22,6 +22,24 @@
     </section>
 
     <section class="arab-kpi-grid" aria-label="Dashboard summary">
+                <% if (navRole === 'admin') { %>
+        <article
+            class="arab-kpi arab-kpi-green"
+            onclick="window.location.href='/games/pending'"
+            onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href='/games/pending'; }"
+            role="link"
+            tabindex="0"
+            style="cursor:pointer;"
+            title="Open Pending Approval"
+        >
+            <div class="arab-kpi-icon">▣</div>
+            <div class="arab-kpi-content">
+                <span>Pending Approval</span>
+                <strong><%= pendingApprovalCount %></strong>
+                <small>Assignments awaiting review</small>
+            </div>
+        </article>
+        <% } else { %>
         <article
             class="arab-kpi arab-kpi-green"
             onclick="window.location.href='/assigned-games'"
@@ -38,6 +56,7 @@
                 <small>Click to view assigned games</small>
             </div>
         </article>
+        <% } %>
         <article class="arab-kpi arab-kpi-red">
             <div class="arab-kpi-icon">▤</div>
             <div class="arab-kpi-content"><span>Outstanding Payments</span><strong><%= Number(paymentOverview.outstanding || 0).toLocaleString() %></strong><small>RWF outstanding</small></div>

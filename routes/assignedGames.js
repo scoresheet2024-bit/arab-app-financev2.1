@@ -105,8 +105,12 @@ END AS can_report
                 LEFT JOIN public.officials oc
                     ON g.commissioner_id = oc.officialid
 
-                WHERE g.assigned = TRUE
-		   AND COALESCE(g.report_submitted, FALSE) = FALSE
+                      WHERE g.assigned = TRUE
+                   AND COALESCE(g.report_submitted, FALSE) = FALSE
+                   AND (
+                        g.approval_status = 'approved'
+                        OR $1 IN ('admin', 'to')
+                   )
                 ORDER BY
                     g.gamedate ASC,
                     g.gametime ASC,

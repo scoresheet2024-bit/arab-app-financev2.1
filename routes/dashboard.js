@@ -70,6 +70,13 @@ router.get('/', async (req, res) => {
             FROM public.games
             WHERE assigned = TRUE AND COALESCE(report_submitted, FALSE) = FALSE
         `);
+        const pendingApprovalResult = await pool.query(`
+            SELECT COUNT(*) AS count
+            FROM public.games
+            WHERE approval_status = 'pending'
+              AND assigned = TRUE
+              AND COALESCE(report_submitted, FALSE) = FALSE
+        `);
         const submittedReportsResult = await pool.query(`
             SELECT COUNT(*) AS count
             FROM public.games
@@ -95,6 +102,7 @@ router.get('/', async (req, res) => {
         const pendingGamesCount = Number(pendingGamesResult.rows[0]?.count || 0);
         const assignedGamesCount = Number(assignedGamesResult.rows[0]?.count || 0);
         const awaitingReportsCount = Number(awaitingReportsResult.rows[0]?.count || 0);
+        const pendingApprovalCount = Number(pendingApprovalResult.rows[0]?.count || 0);
         const submittedReportsCount = Number(submittedReportsResult.rows[0]?.count || 0);
 
         const dashboardGames = dashboardGamesResult.rows.map(game => {
@@ -201,6 +209,7 @@ router.get('/', async (req, res) => {
             assignedGamesCount,
             awaitingReportsCount,
             submittedReportsCount,
+            pendingApprovalCount,
             dashboardGames,
             competitionSummary: competitionSummaryResult.rows,
             paymentOverview,
