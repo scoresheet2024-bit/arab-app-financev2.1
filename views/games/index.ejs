@@ -6,7 +6,8 @@
         ? currentUser
         : (typeof user !== 'undefined' && user ? user : null);
     const gameRole = String(gameUser?.actualRole || gameUser?.role || '').trim().toLowerCase();
-    const canManageGames = ['admin', 'to', 'technical official', 'technical_official', 'technical-official'].includes(gameRole);
+    const canManageGames = ['admin', 'to'].includes(gameRole);
+    const canDeleteGames = gameRole === 'admin';
 %>
 
 <link rel="stylesheet" href="/css/arab-games.css">
@@ -119,14 +120,59 @@
                                     <span class="arab-status arab-status-awaiting">Awaiting Assignment</span>
                                 </td>
                                 <td data-label="Action" class="games-action-cell">
-                                    <% if (canManageGames) { %>
-                                        <a href="/games/assign/<%= game.gameid %>" class="arab-btn arab-btn-primary arab-btn-small">
-                                            Assign Officials
-                                        </a>
-                                    <% } else { %>
-                                        <span class="games-view-only">View only</span>
-                                    <% } %>
-                                </td>
+
+    <% if (canManageGames) { %>
+
+        <a
+            href="/games/<%= game.gameid %>/edit"
+            class="arab-btn arab-btn-small"
+        >
+            ✏️ Edit
+        </a>
+
+        <a
+            href="/games/assign/<%= game.gameid %>"
+            class="arab-btn arab-btn-primary arab-btn-small"
+        >
+            Assign Officials
+        </a>
+
+    <% } %>
+
+
+    <% if (canDeleteGames) { %>
+
+        <form
+            action="/games/<%= game.gameid %>/delete"
+            method="POST"
+            style="display:inline;"
+            onsubmit="return confirm(
+                'Are you sure you want to delete Game #<%= game.gameid %>?\n\nThis will also remove its official assignments and uploaded game documents.'
+            );"
+        >
+
+            <button
+                type="submit"
+                class="arab-btn arab-btn-small"
+                style="background:#dc3545; color:white; border:none;"
+            >
+                🗑️ Delete
+            </button>
+
+        </form>
+
+    <% } %>
+
+
+    <% if (!canManageGames && !canDeleteGames) { %>
+
+        <span class="games-view-only">
+            View only
+        </span>
+
+    <% } %>
+
+</td>
                             </tr>
                         <% }); %>
                     </tbody>

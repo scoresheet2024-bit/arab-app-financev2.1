@@ -1,0 +1,200 @@
+<%- include('../partials/header', { title: 'Edit Game' }) %>
+<%- include('../partials/navigation') %>
+
+<main class="arab-page">
+
+    <section class="arab-page-heading">
+        <div>
+            <div class="arab-eyebrow">ARAB MANAGEMENT SYSTEM</div>
+            <h1 class="page-title">Edit Game</h1>
+            <p class="arab-page-subtitle">
+                Update game information before the game report is submitted.
+            </p>
+        </div>
+    </section>
+
+
+    <section class="arab-card" style="max-width: 850px; margin: 0 auto;">
+
+        <div class="arab-card-header">
+            <div>
+                <h2>
+                    <%= game.teama %> vs <%= game.teamb %>
+                </h2>
+
+                <p>
+                    Game #<%= game.gameid %>
+                </p>
+            </div>
+        </div>
+
+
+        <form
+            action="/games/<%= game.gameid %>/edit"
+            method="POST"
+            style="padding: 25px;"
+        >
+
+            <!-- COMPETITION -->
+
+            <div style="margin-bottom: 20px;">
+
+                <label for="competitionid">
+                    <strong>Competition</strong>
+                </label>
+
+                <select
+                    id="competitionid"
+                    name="competitionid"
+                    required
+                    style="width:100%; padding:12px; margin-top:6px;"
+                >
+
+                    <option value="">
+                        Select Competition
+                    </option>
+
+                    <% competitions.forEach(competition => { %>
+
+                        <option
+                            value="<%= competition.competitionid %>"
+                            <%= String(competition.competitionid) === String(game.competitionid) ? 'selected' : '' %>
+                        >
+                            <%= competition.competitionname %>
+                            <% if (competition.season) { %>
+                                - <%= competition.season %>
+                            <% } %>
+                        </option>
+
+                    <% }); %>
+
+                </select>
+
+            </div>
+
+
+            <!-- TEAM A -->
+
+            <div style="margin-bottom:20px;">
+
+                <label for="teama">
+                    <strong>Team A</strong>
+                </label>
+
+                <input
+                    type="text"
+                    id="teama"
+                    name="teama"
+                    value="<%= game.teama || '' %>"
+                    required
+                    style="width:100%; padding:12px; margin-top:6px;"
+                >
+
+            </div>
+
+
+            <!-- TEAM B -->
+
+            <div style="margin-bottom:20px;">
+
+                <label for="teamb">
+                    <strong>Team B</strong>
+                </label>
+
+                <input
+                    type="text"
+                    id="teamb"
+                    name="teamb"
+                    value="<%= game.teamb || '' %>"
+                    required
+                    style="width:100%; padding:12px; margin-top:6px;"
+                >
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div style="margin-bottom:20px;">
+
+                <label for="gamedate">
+                    <strong>Game Date</strong>
+                </label>
+
+                <input
+                    type="date"
+                    id="gamedate"
+                    name="gamedate"
+                    value="<%= game.gamedate ? new Date(game.gamedate).toISOString().split('T')[0] : '' %>"
+                    required
+                    style="width:100%; padding:12px; margin-top:6px;"
+                >
+
+            </div>
+
+
+            <!-- TIME -->
+
+            <div style="margin-bottom:20px;">
+
+                <label for="gametime">
+                    <strong>Game Time</strong>
+                </label>
+
+                <input
+                    type="time"
+                    id="gametime"
+                    name="gametime"
+                    value="<%= game.gametime || '' %>"
+                    style="width:100%; padding:12px; margin-top:6px;"
+                >
+
+            </div>
+
+
+            <!-- COURT -->
+
+            <div style="margin-bottom:25px;">
+
+                <label for="court">
+                    <strong>Court / Venue</strong>
+                </label>
+
+                <input
+                    type="text"
+                    id="court"
+                    name="court"
+                    value="<%= game.court || '' %>"
+                    style="width:100%; padding:12px; margin-top:6px;"
+                >
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div style="display:flex; gap:12px;">
+
+                <button
+                    type="submit"
+                    class="arab-btn arab-btn-primary"
+                >
+                    Save Changes
+                </button>
+
+                <a
+                    href="/games"
+                    class="arab-btn"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<%- include('../partials/footer') %>

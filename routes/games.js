@@ -263,6 +263,328 @@ router.post(
 });
 
 // ======================================================
+// EDIT GAME - SHOW FORM
+// Admin and TO only
+// Only allowed before report submission
+// ======================================================
+
+router.get(
+    '/games/:id/edit',
+    requireRole('admin', 'to'),
+    async (req, res) => {
+
+        try {
+
+            const gameid = req.params.id;
+
+            const gameResult = await pool.query(`
+                SELECT
+                    g.gameid,
+                    g.competitionid,
+                    g.teama,
+                    g.teamb,
+                    g.gamedate,
+                    g.gametime,
+                    g.court,
+                    g.assigned,
+                    g.report_submitted,
+                    c.competitionname AS competition,
+                    c.season
+                FROM public.games g
+                LEFT JOIN public.competitions c
+                    ON g.competitionid = c.competitionid
+                WHERE g.gameid = $1
+            `, [gameid]);
+
+            if (gameResult.rows.length === 0) {
+                return res.status(404).send('Game not found.');
+            }
+
+            const game = gameResult.rows[0];
+
+            // Do not allow editing after report submission
+            if (game.report_submitted === true) {
+                return res.status(403).send(
+                    'This game cannot be edited because the game report has already been submitted.'
+                );
+            }
+
+            // Get competitions
+            const competitionsResult = await pool.query(`
+                SELECT
+                    competitionid,
+                    competitionname,
+                    season
+                FROM public.competitions
+                ORDER BY
+                    competitionname ASC,
+                    season DESC
+            `);
+
+            res.render(
+                'games/edit',
+                {
+                    game: game,
+                    competitions: competitionsResult.rows
+                }
+            );
+
+        } catch (error) {
+
+            console.error('Error loading edit game page:', error);
+
+            res.status(500).send(
+                'Error loading edit game page: ' +
+                error.message
+            );
+        }
+    }
+);
+
+
+// ======================================================
+// UPDATE GAME
+// Admin and TO only
+// Only allowed before report submission
+// ======================================================
+
+router.post(
+    '/games/:id/edit',
+    requireRole('admin', 'to'),
+    async (req, res) => {
+
+        try {
+
+            const gameid = req.params.id;
+
+            const {
+                competitionid,
+                teama,
+                teamb,
+                gamedate,
+                gametime,
+                court
+            } = req.body;
+
+
+            // ==================================================
+            // VALIDATE REQUIRED FIELDS
+            // ==================================================
+
+            if (!competitionid) {
+                return res.status(400).send(
+                    'Competition is required.'
+                );
+            }
+
+            if (!teama || !teama.trim()) {
+                return res.status(400).send(
+                    'Team A is required.'
+                );
+            }
+
+            if (!teamb || !teamb.trim()) {
+                return res.status(400).send(
+                    'Team B is required.'
+                );
+            }
+
+            if (!gamedate) {
+                return res.status(400).send(
+                    'Game date is required.'
+                );
+            }
+
+
+            // ==================================================
+            // CHECK GAME EXISTS AND REPORT STATUS
+            // ==================================================
+
+            const check = await pool.query(`
+                SELECT
+                    gameid,
+                    report_submitted
+                FROM public.games
+                WHERE gameid = $1
+            `, [gameid]);
+
+            if (check.rows.length === 0) {
+                return res.status(404).send(
+                    'Game not found.'
+                );
+            }
+
+            if (check.rows[0].report_submitted === true) {
+                return res.status(403).send(
+                    'This game cannot be edited because the game report has already been submitted.'
+                );
+            }
+
+
+            // ==================================================
+            // UPDATE GAME INFORMATION
+            // ==================================================
+
+            await pool.query(`
+                UPDATE public.games
+                SET
+                    competitionid = $1,
+                    teama = $2,
+                    teamb = $3,
+                    gamedate = $4,
+                    gametime = $5,
+                    court = $6
+                WHERE gameid = $7
+            `, [
+                competitionid,
+                teama.trim(),
+                teamb.trim(),
+                gamedate,
+                gametime || null,
+                court || null,
+                gameid
+            ]);
+
+
+            // ==================================================
+            // SUCCESS
+            // ==================================================
+
+            res.redirect('/games');
+
+        } catch (error) {
+
+            console.error('Error updating game:', error);
+
+            res.status(500).send(
+                'Error updating game: ' +
+                error.message
+            );
+        }
+    }
+);
+
+// ======================================================
+// DELETE GAME
+// Admin only
+// Only allowed before report submission
+// ======================================================
+
+router.post(
+    '/games/:id/delete',
+    requireRole('admin'),
+    async (req, res) => {
+
+        const client = await pool.connect();
+
+        try {
+
+            const gameid = req.params.id;
+
+            // ==================================================
+            // CHECK GAME
+            // ==================================================
+
+            const gameResult = await client.query(`
+                SELECT
+                    gameid,
+                    report_submitted
+                FROM public.games
+                WHERE gameid = $1
+            `, [gameid]);
+
+            if (gameResult.rows.length === 0) {
+                return res.status(404).send(
+                    'Game not found.'
+                );
+            }
+
+            // ==================================================
+            // DO NOT DELETE AFTER REPORT SUBMISSION
+            // ==================================================
+
+            if (gameResult.rows[0].report_submitted === true) {
+                return res.status(403).send(
+                    'This game cannot be deleted because the game report has already been submitted.'
+                );
+            }
+
+
+            // ==================================================
+            // START TRANSACTION
+            // ==================================================
+
+            await client.query('BEGIN');
+
+
+            // ==================================================
+            // DELETE ASSIGNMENTS FIRST
+            // ==================================================
+
+            await client.query(`
+                DELETE FROM public.assignments
+                WHERE gameid = $1
+            `, [gameid]);
+
+
+            // ==================================================
+            // DELETE GAME DOCUMENTS
+            // ==================================================
+
+            await client.query(`
+                DELETE FROM public.game_documents
+                WHERE gameid = $1
+            `, [gameid]);
+
+
+            // ==================================================
+            // DELETE GAME
+            // ==================================================
+
+            await client.query(`
+                DELETE FROM public.games
+                WHERE gameid = $1
+            `, [gameid]);
+
+
+            // ==================================================
+            // COMMIT
+            // ==================================================
+
+            await client.query('COMMIT');
+
+
+            res.redirect('/games');
+
+        } catch (error) {
+
+            try {
+                await client.query('ROLLBACK');
+            } catch (rollbackError) {
+                console.error(
+                    'Rollback error:',
+                    rollbackError
+                );
+            }
+
+            console.error(
+                'Error deleting game:',
+                error
+            );
+
+            res.status(500).send(
+                'Error deleting game: ' +
+                error.message
+            );
+
+        } finally {
+
+            client.release();
+        }
+    }
+);
+
+// ======================================================
 // ASSIGN GAME - SHOW FORM
 // ======================================================
 
