@@ -43,19 +43,13 @@ router.get('/', async (req, res) => {
     WHERE g.assigned = TRUE
       AND COALESCE(g.report_submitted, FALSE) = FALSE
       AND (
-            -- Admin can report all assigned games
+            g.approval_status = 'approved'
+            OR $1 IN ('admin', 'to')
+      )
+      AND (
             $1 = 'admin'
-
-            -- TO can report all assigned games
-            OR $1 = 'to'
-
-            -- Other users must:
-            -- 1. have the game approved
-            -- 2. actually be assigned to that game
             OR (
-                $1 IN ('referee', 'official')
-                AND g.approval_status = 'approved'
-                AND $2 > 0
+                $2 > 0
                 AND (
                     EXISTS (
                         SELECT 1
@@ -74,10 +68,7 @@ router.get('/', async (req, res) => {
                 )
             )
       )
-`, [
-    actualRole,
-    Number(req.user?.officialid) || 0
-]);
+`, [actualRole, Number(req.user?.officialid) || 0]);
              
         const awaitingReportsResult = await pool.query(`
             SELECT COUNT(*) AS count
